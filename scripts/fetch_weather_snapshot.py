@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 
 STEP = 0.05
 LAT0, LAT1 = 35.75, 36.15   # cell origins 35.75 .. 36.10
-LON0, LON1 = 14.10, 14.65   # cell origins 14.10 .. 14.60
+LON0, LON1 = 14.10, 14.80   # cell origins 14.10 .. 14.75 (wrecks est jusqu'a 14.71 : Nasturtium, King Edwin)
 CHUNK = 25
 RETRIES = 3
 
