@@ -1,0 +1,50 @@
+name: Snapshot watchdog
+on:
+  schedule:
+    - cron: "43 */6 * * *"   # 26 min apres un run snapshot : age attendu < 1 h si tout va bien
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check snapshot age
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const URL = 'https://raw.githubusercontent.com/nick0m-0x42/malta-dive-data/weather-snapshot/data/weather-snapshot.json';
+            let ageH = null, problem = null;
+            try {
+              const r = await fetch(URL, { cache: 'no-store' });
+              if (!r.ok) {
+                problem = `snapshot inaccessible (HTTP ${r.status})`;
+              } else {
+                const j = await r.json();
+                ageH = (Date.now() - Date.parse(j.generated_utc)) / 3.6e6;
+                if (!(ageH >= 0)) problem = 'generated_utc illisible';
+                else if (ageH > 9) problem = `snapshot vieux de ${ageH.toFixed(1)} h (attendu < 3 h, soit au moins 3 runs manques)`;
+              }
+            } catch (e) {
+              problem = `erreur watchdog: ${e.message}`;
+            }
+            const title = '\u26a0 Weather snapshot en panne';
+            const { owner, repo } = context.repo;
+            const open = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'watchdog' });
+            const existing = open.data.find(i => i.title === title);
+            if (problem) {
+              const body = `Watchdog ${new Date().toISOString()} : ${problem}.\n\nImpact : le fallback meteo du Malta Dive Atlas sert des donnees de plus en plus perimees en cas de panne Open-Meteo.\nA verifier : onglet Actions, workflow \"Weather snapshot (fallback Open-Meteo)\".`;
+              if (existing) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+              } else {
+                await github.rest.issues.create({ owner, repo, title, body, labels: ['watchdog'] });
+              }
+              core.setFailed(problem);
+            } else if (existing) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body: `Retabli : snapshot a jour (${ageH.toFixed(1)} h).` });
+              await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: 'closed' });
+            } else {
+              core.info(`OK : snapshot age de ${ageH.toFixed(1)} h.`);
+            }

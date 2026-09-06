@@ -1,7 +1,7 @@
 name: Weather snapshot (fallback Open-Meteo)
 on:
   schedule:
-    - cron: "17 */6 * * *"   # toutes les 6 h, minute decalee pour eviter la congestion GitHub
+    - cron: "17 */3 * * *"   # toutes les 3 h, minute decalee pour eviter la congestion GitHub
   workflow_dispatch: {}      # lancement manuel possible
 permissions:
   contents: write
