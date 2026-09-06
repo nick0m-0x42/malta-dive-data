@@ -8,8 +8,9 @@ le script choisit la cellule oceanique valide la plus proche (rayon 0.25 deg).
 Auth: COPERNICUSMARINE_SERVICE_USERNAME / _PASSWORD (secrets GitHub).
 Schema JSON:
 {updated, source, islands: {m|g: {cell: [lat,lon],
-  days: {"YYYY-MM-DD": {levels: {"0","20","30","40"}, thermocline_depth, t_above, t_below}},
-  profile: [[z,t],...]  # jour courant
+  days: {"YYYY-MM-DD": {levels: {"0","20","30","40"}, thermocline_depth, t_above, t_below,
+                        profile: [[z,t],...]}},   # profil complet PAR JOUR (V3)
+  profile: [[z,t],...]  # jour courant (retrocompat V2)
 }}}
 """
 import json, os, sys, datetime, pathlib, traceback
@@ -84,8 +85,9 @@ def island(ds, lat, lon):
         t = p.values.astype(float)
         date = str(col["time"].values[ti])[:10]
         days[date] = analyse(z, t)
+        days[date]["profile"] = [[round(float(a), 1), round(float(b), 2)] for a, b in zip(z, t)]
         if prof is None:
-            prof = [[round(float(a), 1), round(float(b), 2)] for a, b in zip(z, t)]
+            prof = days[date]["profile"]
     return {"cell": [round(la, 3), round(lo, 3)], "days": days, "profile": prof}
 
 def main():
