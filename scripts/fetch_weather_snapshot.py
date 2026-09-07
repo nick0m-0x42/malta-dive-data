@@ -90,6 +90,11 @@ def fetch_batch(url, batch, hourly_vars, daily_vars=None):
     }
     if daily_vars:
         params["daily"] = ",".join(daily_vars)
+    if url == MARINE_URL:
+        # Force la cellule de grille MER la plus proche : les centres de cellule
+        # peuvent tomber a terre (masque terre/mer du modele de vagues), ce qui
+        # renvoie des series nulles. Meme correctif que app.js cote site (07/09/2026).
+        params["cell_selection"] = "sea"
     data = http_json(url, params)
     if isinstance(data, dict):
         data = [data]
