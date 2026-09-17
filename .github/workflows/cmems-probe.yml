@@ -1,0 +1,34 @@
+name: Sonde CMEMS (densite houle et courant)
+# POURQUOI : mesurer, en lecture seule, les points reels et la completude des
+# previsions Copernicus Mediterranee (1/24 deg) autour de Malte, avant de les
+# brancher sur la carte a temoins (17/09). Le rapport est commite meme en echec.
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ['scripts/cmems_probe.py', '.github/workflows/cmems-probe.yml']
+permissions:
+  contents: write
+concurrency:
+  group: cmems-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.11" }
+      - run: pip install "copernicusmarine>=2" xarray numpy
+      - name: Sonder et commiter
+        env:
+          COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUS_USER }}
+          COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
+        run: |
+          timeout 20m python scripts/cmems_probe.py || echo "sonde interrompue (code $?)" >> data/banc/cmems-probe.txt
+          git config user.name "cmems-probe-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/banc/cmems-probe.txt
+          git diff --cached --quiet || git commit -m "sonde CMEMS $(date -u +%FT%H:%MZ)"
+          git pull --rebase --autostash && git push
