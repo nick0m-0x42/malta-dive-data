@@ -14,6 +14,8 @@ fiabilite se mesure en prevision, contre des observations reelles, sur au moins
 Il ne calcule aucun verdict : il amasse. Le verdict est un script separe.
 Regle du projet : un 200 ne prouve rien, on compte les valeurs non vides, et
 tout manque est ecrit dans le rapport, jamais masque.
+17/09 : le premier run a depasse le plafond de 30 min en sondant un par un tous
+les jeux CALYPSO ; la recherche des vagues est bornee et les delais raccourcis.
 Sortie : data/banc/prev/<date>.json.gz, data/banc/obs/<source>/<date>.*.gz,
 data/banc/last-run.txt (une ligne OK/ECHEC puis le detail).
 Idempotent : une date deja archivee est reecrite a l'identique ou completee.
@@ -25,7 +27,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "banc"
 TODAY = dt.datetime.utcnow().strftime("%Y-%m-%d")
 LOG, PROBLEMES = [], []
-def say(s): print(s); LOG.append(s)
+def say(s): print(s, flush=True); LOG.append(s)
 def pb(s): say("PROBLEME " + s); PROBLEMES.append(s)
 
 def get(url, timeout=120, tries=3):
@@ -41,7 +43,8 @@ def get(url, timeout=120, tries=3):
                 return last
         except Exception as e:
             last = (0, repr(e).encode()[:300])
-        time.sleep(5 * (i + 1))
+        if i < tries - 1:
+            time.sleep(5 * (i + 1))
     return last
 
 def wgz(path, data):
@@ -86,7 +89,7 @@ for couche, url, model, hourly, extra in MODELES:
     p = {"latitude": lats, "longitude": lons, "hourly": hourly, "models": model,
          "forecast_days": 7, "timezone": "UTC", "wind_speed_unit": "kmh"}
     p.update(extra)
-    st, body = get(url + "?" + urllib.parse.urlencode(p))
+    st, body = get(url + "?" + urllib.parse.urlencode(p), timeout=60)
     if st != 200:
         pb("prevision %s : HTTP %s %s" % (model, st, body[:120])); continue
     d = json.loads(body); d = d if isinstance(d, list) else [d]
@@ -110,7 +113,7 @@ iem = ("https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?station=LMML"
        "&data=sknt&data=drct&data=gust&tz=Etc/UTC&format=onlycomma&latlon=yes&missing=M&trace=T"
        "&year1=%d&month1=%d&day1=%d&year2=%d&month2=%d&day2=%d"
        % (d0.year, d0.month, d0.day, d1.year, d1.month, d1.day))
-st, body = get(iem)
+st, body = get(iem, timeout=60, tries=2)
 rows = [l for l in body.decode("utf-8", "replace").splitlines() if l.startswith("LMML")] if st == 200 else []
 say("observation LMML : HTTP %s, %d lignes" % (st, len(rows)))
 if not rows: pb("LMML vide")
@@ -122,7 +125,7 @@ t0 = (dt.datetime.utcnow() - dt.timedelta(hours=48)).strftime("%Y-%m-%dT%H:00:00
 t1 = dt.datetime.utcnow().strftime("%Y-%m-%dT%H:00:00Z")
 BOX = "[(35.70):1:(36.20)][(14.05):1:(14.70)]"
 
-st, body = get(ERD + "/search/index.json?page=1&itemsPerPage=200&searchFor=CALYPSO")
+st, body = get(ERD + "/search/index.json?page=1&itemsPerPage=200&searchFor=CALYPSO", timeout=60, tries=2)
 jeux = []
 if st == 200:
     tab = json.loads(body)["table"]; ci = tab["columnNames"].index("Dataset ID")
@@ -131,7 +134,7 @@ say("jeux CALYPSO sur ERDDAP : " + (", ".join(jeux) if jeux else "aucun (HTTP %s
 
 def calypso(ds, variables, tag):
     q = ",".join("%s[(%s):1:(%s)][0]%s" % (v, t0, t1, BOX) for v in variables)
-    st, body = get("%s/griddap/%s.csv?%s" % (ERD, ds, urllib.parse.quote(q, safe="[]():,.")), timeout=300)
+    st, body = get("%s/griddap/%s.csv?%s" % (ERD, ds, urllib.parse.quote(q, safe="[]():,.")), timeout=120, tries=2)
     if st != 200:
         pb("CALYPSO %s : HTTP %s %s" % (tag, st, body[:160])); return
     lines = body.decode("utf-8", "replace").splitlines()[2:]
@@ -148,8 +151,10 @@ calypso("EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3", ["EWCT", "NSCT"], "courant")
 
 # Vagues : on cherche un jeu CALYPSO qui porte une hauteur significative.
 vague = None
-for ds in jeux:
-    st, das = get("%s/griddap/%s.das" % (ERD, ds))
+cands = [j for j in jeux if "wav" in j.lower()][:6]  # borne : le run du 17/09 a depasse 30 min
+say("candidats vagues CALYPSO : " + (", ".join(cands) if cands else "aucun"))
+for ds in cands:
+    st, das = get("%s/griddap/%s.das" % (ERD, ds), timeout=30, tries=1)
     if st != 200:
         continue
     txt = das.decode("utf-8", "replace")
