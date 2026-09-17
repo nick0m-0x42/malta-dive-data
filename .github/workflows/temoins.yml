@@ -1,0 +1,44 @@
+name: Temoins carte (flux dense)
+# POURQUOI : publie data/temoins.json (houle et courant Copernicus 1/24 deg,
+# vent ICON-2I puis IFS) pour la carte a temoins de Malta Dive Atlas (17/09).
+# Le rapport data/temoins-run.txt est commite meme en echec, puis le job
+# echoue visiblement.
+on:
+  schedule:
+    - cron: "25 */6 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ['scripts/build_temoins.py', '.github/workflows/temoins.yml']
+permissions:
+  contents: write
+concurrency:
+  group: temoins
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.11" }
+      - run: pip install "copernicusmarine>=2" xarray numpy
+      - name: Construire, commiter, signaler
+        env:
+          COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUS_USER }}
+          COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
+        run: |
+          set +e
+          timeout 25m python scripts/build_temoins.py
+          CODE=$?
+          [ -f data/temoins-run.txt ] || echo "ECHEC script interrompu (code $CODE)" > data/temoins-run.txt
+          git config user.name "temoins-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/temoins-run.txt
+          [ -f data/temoins.json ] && git add data/temoins.json
+          if ! git diff --cached --quiet; then
+            git commit -m "temoins $(date -u +%FT%H:%MZ) (code $CODE)"
+            git pull --rebase --autostash && git push || CODE=1
+          fi
+          exit $CODE
