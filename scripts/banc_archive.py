@@ -163,7 +163,8 @@ say("jeux CALYPSO sur ERDDAP : " + (", ".join(jeux) if jeux else "aucun (HTTP %s
 report("recherche CALYPSO")
 
 def calypso(ds, variables, tag):
-    q = ",".join("%s[(%s):1:(%s)][0]%s" % (v, t0, t1, BOX) for v in variables)
+    # borne de fin = derniere heure publiee : une heure future vaut HTTP 400 (run du 17/09 17:37)
+    q = ",".join("%s[(%s):1:(last)][0]%s" % (v, t0, BOX) for v in variables)
     st, body = get("%s/griddap/%s.csv?%s" % (ERD, ds, urllib.parse.quote(q, safe="[]():,.")), timeout=120, tries=2)
     if st != 200:
         pb("CALYPSO %s : HTTP %s %s" % (tag, st, body[:160])); return
