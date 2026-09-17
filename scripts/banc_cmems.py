@@ -14,6 +14,11 @@ foi d'un simple 200, on compte les valeurs non vides et les mailles marines.
 Sorties : data/banc/prev-cmems/<date>.json.gz, data/banc/obs/houle-*/<date>.csv.gz
 et data/banc/arbitre-houle.txt.
 Idempotent : une date deja archivee est reecrite.
+17/09 21h : le run de 18:35 a ete tue par le plafond de 25 min AVANT d'ecrire
+son rapport, donc sans rien apprendre. Deux corrections : le rapport est ecrit
+apres chaque etape, et l'inventaire du catalogue (deux appels `describe` qui
+balaient tout Copernicus, la partie lente) n'est refait que si arbitre-houle.txt
+a plus de 7 jours. La fenetre de lecture des arbitres passe a 24 h.
 """
 import datetime as dt, gzip, json, pathlib, subprocess, sys, time, traceback
 
@@ -102,12 +107,23 @@ def ids(cat):
             for v in o: walk(v)
     walk(cat); return sorted(set(out))
 
-for motif, quoi in (("WAVE_GLO_PHY_SWH", "altimetrie satellite, hauteur significative le long des traces"),
-                    ("INSITU_MED", "observations in situ de Mediterranee, bouees comprises")):
+# L'inventaire du catalogue (deux `describe` qui balaient tout Copernicus) est
+# la partie lente : une fois par semaine suffit, la liste ne bouge pas chaque jour.
+MOTIFS = [("WAVE_GLO_PHY_SWH", "altimetrie satellite, hauteur significative le long des traces"),
+          ("INSITU_MED", "observations in situ de Mediterranee, bouees comprises")]
+try:
+    age = (dt.datetime.utcnow().timestamp() - (OUT / "arbitre-houle.txt").stat().st_mtime) / 86400
+except OSError:
+    age = None
+faire_inventaire = age is None or age >= 7
+if not faire_inventaire:
+    ar("inventaire du catalogue saute : rapport vieux de %.1f jour(s), refait a 7 jours" % age)
+for motif, quoi in (MOTIFS if faire_inventaire else []):
     js = ids(describe(motif))
     ar("%s (%s) : %d jeux" % (motif, quoi, len(js)))
     for j in js[:12]: ar("  - " + j)
     if not js: ar("  aucun jeu : a chercher hors Copernicus")
+    rapport("arbitre-houle.txt", AR)
 
 # Ces jeux sont tabulaires (sqlite), pas en grille : read_dataframe, pas
 # open_dataset (constat du run de 18:00). On archive ce qui tombe sur la zone.
@@ -117,8 +133,8 @@ def tableau(ds_id, jours, **extra):
         start_datetime=(t0 - dt.timedelta(days=jours)).strftime("%Y-%m-%dT%H:%M:%S"),
         end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **dict(BOX, **extra))
 
-ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 2),
-       ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 2)]
+ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 1),
+       ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 1)]
 for tag, ds_id, jours in ARB:
     try:
         df = tableau(ds_id, jours)
@@ -135,5 +151,6 @@ for tag, ds_id, jours in ARB:
             ar("  -> rien a archiver (aucune ligne ou aucune colonne de houle)")
     except Exception as e:
         ar("%s %s : ECHEC %s" % (tag, ds_id, repr(e)[:220]))
+    rapport("arbitre-houle.txt", AR)   # a chaque candidat : un arret net laisse quand meme une trace
 rapport("arbitre-houle.txt", AR)
 sys.exit(1 if PB else 0)
