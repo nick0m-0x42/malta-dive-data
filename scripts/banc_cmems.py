@@ -11,7 +11,8 @@ POURQUOI (Nicolas, 17/09 soir) :
       significative le long des traces) et bouees in situ de Mediterranee.
 Le rapport dit ce qui a ete trouve ET ce qui manque ; rien n'est retenu sur la
 foi d'un simple 200, on compte les valeurs non vides et les mailles marines.
-Sorties : data/banc/prev-cmems/<date>.json.gz et data/banc/arbitre-houle.txt.
+Sorties : data/banc/prev-cmems/<date>.json.gz, data/banc/obs/houle-*/<date>.csv.gz
+et data/banc/arbitre-houle.txt.
 Idempotent : une date deja archivee est reecrite.
 """
 import datetime as dt, gzip, json, pathlib, subprocess, sys, time, traceback
@@ -108,17 +109,31 @@ for motif, quoi in (("WAVE_GLO_PHY_SWH", "altimetrie satellite, hauteur signific
     for j in js[:12]: ar("  - " + j)
     if not js: ar("  aucun jeu : a chercher hors Copernicus")
 
-# Couverture reelle autour de Malte pour le premier jeu altimetrique horaire.
-cand = [j for j in ids(describe("WAVE_GLO_PHY_SWH")) if "nrt" in j.lower()][:2]
-for ds_id in cand:
+# Ces jeux sont tabulaires (sqlite), pas en grille : read_dataframe, pas
+# open_dataset (constat du run de 18:00). On archive ce qui tombe sur la zone.
+def tableau(ds_id, jours, **extra):
+    return copernicusmarine.read_dataframe(
+        dataset_id=ds_id,
+        start_datetime=(t0 - dt.timedelta(days=jours)).strftime("%Y-%m-%dT%H:%M:%S"),
+        end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **dict(BOX, **extra))
+
+ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 2),
+       ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 2)]
+for tag, ds_id, jours in ARB:
     try:
-        ds = copernicusmarine.open_dataset(dataset_id=ds_id,
-            start_datetime=(t0 - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S"),
-            end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **BOX)
-        n = int(sum(ds.sizes.values()))
-        ar("%s : ouvert, dimensions %s" % (ds_id, dict(ds.sizes)))
-        ar("  -> %s" % ("passages satellite disponibles sur la zone" if n else "AUCUN passage sur la zone en 7 jours"))
+        df = tableau(ds_id, jours)
+        n = len(df)
+        cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE"))]
+        ar("%s %s : %d lignes sur la zone en %d jours, colonnes de houle : %s"
+           % (tag, ds_id, n, jours, ", ".join(map(str, cols)) or "aucune"))
+        if n and cols:
+            d = OUT / "obs" / ("houle-" + tag); d.mkdir(parents=True, exist_ok=True)
+            with open(d / (TODAY + ".csv.gz"), "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
+                f.write(df.to_csv(index=False).encode("utf-8"))
+            ar("  -> archive : obs/houle-%s/%s.csv.gz" % (tag, TODAY))
+        else:
+            ar("  -> rien a archiver (aucune ligne ou aucune colonne de houle)")
     except Exception as e:
-        ar("%s : ECHEC %r" % (ds_id, repr(e)[:200]))
+        ar("%s %s : ECHEC %s" % (tag, ds_id, repr(e)[:220]))
 rapport("arbitre-houle.txt", AR)
 sys.exit(1 if PB else 0)
