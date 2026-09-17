@@ -152,7 +152,7 @@ report("LMML")
 ERD = "https://erddap.hfrnode.eu/erddap"
 t0 = (dt.datetime.utcnow() - dt.timedelta(hours=48)).strftime("%Y-%m-%dT%H:00:00Z")
 t1 = dt.datetime.utcnow().strftime("%Y-%m-%dT%H:00:00Z")
-BOX = "[(35.70):1:(36.20)][(14.05):1:(14.70)]"
+BOX = "[(35.75):1:(36.15)][(14.10):1:(14.65)]"  # bornes de la sonde du 17/09 ; 35.70-36.20 sort de la grille (HTTP 404)
 
 st, body = get(ERD + "/search/index.json?page=1&itemsPerPage=200&searchFor=CALYPSO", timeout=60, tries=2)
 jeux = []
