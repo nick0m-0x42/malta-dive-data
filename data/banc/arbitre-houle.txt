@@ -1,0 +1,19 @@
+Recherche d'un arbitre de houle, 2026-09-17 18:00 UTC
+Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
+WAVE_GLO_PHY_SWH (altimetrie satellite, hauteur significative le long des traces) : 27 jeux
+  - cci_obs-wave_glo_phy-swh_my_l3_PT1S-i
+  - cmems_obs-wave_glo_phy-swh_my_multi-l4-0.5deg_P1D-i
+  - cmems_obs-wave_glo_phy-swh_my_multi-l4-2deg_P1D-m
+  - cmems_obs-wave_glo_phy-swh_nrt_al-l3-1km_PT0.2S-i
+  - cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S
+  - cmems_obs-wave_glo_phy-swh_nrt_c2-l3-1km_PT0.2S-i
+  - cmems_obs-wave_glo_phy-swh_nrt_c2-l3_PT1S
+  - cmems_obs-wave_glo_phy-swh_nrt_cfo-l3-1km_PT0.2S-i
+  - cmems_obs-wave_glo_phy-swh_nrt_cfo-l3_PT1S
+  - cmems_obs-wave_glo_phy-swh_nrt_h2b-l3-1km_PT0.2S-i
+  - cmems_obs-wave_glo_phy-swh_nrt_h2b-l3_PT1S
+  - cmems_obs-wave_glo_phy-swh_nrt_h2c-l3-1km_PT0.2S-i
+INSITU_MED (observations in situ de Mediterranee, bouees comprises) : 1 jeux
+  - cmems_obs-ins_med_phybgcwav_mynrt_na_irr
+cmems_obs-wave_glo_phy-swh_nrt_al-l3-1km_PT0.2S-i : ECHEC 'FormatNotSupported("Lazy loading of format type \'sqlite\' not supported with command \'open_dataset\'. You may want to look into \'read_dataframe\' instead to subset your data.")'
+cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : ECHEC 'FormatNotSupported("Lazy loading of format type \'sqlite\' not supported with command \'open_dataset\'. You may want to look into \'read_dataframe\' instead to subset your data.")'
