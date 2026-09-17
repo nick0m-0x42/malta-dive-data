@@ -21,7 +21,7 @@ a chaque echeance J+1, J+3, J+6. Sinon on prolonge.
 
 ## Dernier run
 ```
-ECHEC 2026-09-17T18:28Z · 1 probleme(s) · derniere etape : fin
+ECHEC 2026-09-17T18:35Z · 1 probleme(s) · derniere etape : fin
 prevision gfs_seamless                 4536/4536 valeurs non vides
 prevision ecmwf_ifs                    4536/4536 valeurs non vides
 prevision icon_eu                      3591/4536 valeurs non vides
@@ -30,16 +30,16 @@ prevision ecmwf_wam025                 4536/4536 valeurs non vides
 prevision meteofrance_wave             4536/4536 valeurs non vides
 prevision ncep_gfswave016              4536/4536 valeurs non vides
 prevision meteofrance_currents         3024/3024 valeurs non vides
--- etape previsions terminee a 15 s
+-- etape previsions terminee a 13 s
 observation LMML : HTTP 200, 96 lignes
--- etape LMML terminee a 17 s
+-- etape LMML terminee a 14 s
 jeux CALYPSO sur ERDDAP : EUHFR_NRTcurrent_HFR-CALYPSO-BARK_v3, EUHFR_NRTcurrent_HFR-CALYPSO-CENC_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LAPS_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LICA_v3, EUHFR_NRTcurrent_HFR-CALYPSO-MRAG_v3, EUHFR_NRTcurrent_HFR-CALYPSO-POZZ_v3, EUHFR_NRTcurrent_HFR-CALYPSO-SOPU_v3, EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3
--- etape recherche CALYPSO terminee a 18 s
+-- etape recherche CALYPSO terminee a 15 s
 observation CALYPSO courant : 13824 lignes, 48 heures, 7588 lignes renseignees
--- etape CALYPSO courant terminee a 21 s
+-- etape CALYPSO courant terminee a 17 s
 candidats vagues CALYPSO : aucun
 PROBLEME aucun jeu de vagues CALYPSO ouvert trouve sur ERDDAP (a chercher ailleurs)
--- etape fin terminee a 21 s
+-- etape fin terminee a 17 s
 ```
 
 ## Dernier run Copernicus
