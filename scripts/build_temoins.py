@@ -10,6 +10,16 @@ couche, modeles a 9-28 km). La sonde CMEMS (data/banc/cmems-probe.txt) donne
 de grille reels, coordonnees de la source, aucune interpolation ; toute valeur
 absente reste null. Ce flux sert l'AFFICHAGE ; le Dive Index ne bascule que sur
 verdict du banc de fiabilite.
+
+FENETRE (17/09 soir, demande de Nicolas) : le flux commence a MINUIT LOCAL du
+jour en cours, plus 168 h a partir de l'heure courante. Motif : il commencait a
+l'heure de generation, donc les creneaux deja ecoules du jour (06-10, 10-14)
+n'avaient aucune heure et l'atlas affichait un tiret sur la ligne d'aujourd'hui.
+Nicolas a tranche « on n'affiche qu'une donnee valide » : plutot que d'inventer
+un repli cote atlas, le flux porte les heures ecoulees du jour, qui sont de
+l'analyse pour Copernicus et de l'observe-analyse pour Open-Meteo. Cout : au
+plus 23 heures de plus, soit environ 14 % de taille en fin de journee.
+
 Sortie : data/temoins.json (raw public, lu par l'atlas), heures locales Malte.
 Encodage entier : houle en cm, periode en dixiemes de s, vitesses en cm/s pour
 le courant et en dixiemes de km/h pour le vent, directions en degres (houle et
@@ -31,9 +41,14 @@ def pb(s): say("PROBLEME " + s); PB.append(s)
 
 t0u = dt.datetime.now(dt.timezone.utc).replace(minute=0, second=0, microsecond=0)
 t1u = t0u + dt.timedelta(hours=168)
+# Debut de fenetre : minuit LOCAL du jour en cours, pour que les creneaux deja
+# ecoules de la journee aient leurs heures.
+tsu = dt.datetime.now(MT).replace(hour=0, minute=0, second=0, microsecond=0).astimezone(dt.timezone.utc)
 def loc(tu): return tu.astimezone(MT).strftime("%Y-%m-%dT%H:00")
-TIMES = [loc(t0u + dt.timedelta(hours=i)) for i in range(169)]
+N = int((t1u - tsu).total_seconds() // 3600) + 1
+TIMES = [loc(tsu + dt.timedelta(hours=i)) for i in range(N)]
 IDX = {t: i for i, t in enumerate(TIMES)}
+say("fenetre : %s -> %s, %d heures (dont %d deja ecoulees)" % (TIMES[0], TIMES[-1], N, N - 169))
 
 def rnd(x, k):
     if x is None: return None
@@ -50,7 +65,7 @@ try:
     import copernicusmarine, numpy as np
     def cm(ds_id, variables):
         ds = copernicusmarine.open_dataset(dataset_id=ds_id, variables=variables,
-            start_datetime=t0u.strftime("%Y-%m-%dT%H:%M:%S"), end_datetime=t1u.strftime("%Y-%m-%dT%H:%M:%S"), **BOX)
+            start_datetime=tsu.strftime("%Y-%m-%dT%H:%M:%S"), end_datetime=t1u.strftime("%Y-%m-%dT%H:%M:%S"), **BOX)
         return ds
     def series(ds, v):
         a = ds[v]
@@ -72,7 +87,7 @@ try:
             col = H[:, j, i]
             if np.all(np.isnan(col)): continue
             pts.append([round(float(la), 4), round(float(lo), 4)])
-            rh, rd, rp = [None] * 169, [None] * 169, [None] * 169
+            rh, rd, rp = [None] * N, [None] * N, [None] * N
             for k, t in enumerate(ti):
                 if t is None: continue
                 rh[t] = rnd(float(H[k, j, i]), 100); rd[t] = rnd(float(D[k, j, i]), 1); rp[t] = rnd(float(P[k, j, i]), 10)
@@ -90,7 +105,7 @@ try:
         for i, lo in enumerate(lons):
             if np.all(np.isnan(U[:, j, i])): continue
             pts.append([round(float(la), 4), round(float(lo), 4)])
-            rs, rd = [None] * 169, [None] * 169
+            rs, rd = [None] * N, [None] * N
             for k, t in enumerate(ti):
                 if t is None: continue
                 u, v = float(U[k, j, i]), float(V[k, j, i])
@@ -99,7 +114,8 @@ try:
                 rd[t] = int(round(math.degrees(math.atan2(u, v)) % 360))  # vers ou va le courant
             ss.append(rs); dd.append(rd)
     nn = sum(1 for r in ss for x in r if x is not None)
-    say("courant CMEMS : %d points, %d valeurs" % (len(pts), nn))
+    heures_cur = sum(1 for i in range(N) if any(r[i] is not None for r in ss))
+    say("courant CMEMS : %d points, %d valeurs, %d heures couvertes sur %d" % (len(pts), nn, heures_cur, N))
     if not nn: pb("courant CMEMS vide")
     out["layers"]["cur"] = {"src": "Copernicus Marine MEDSEA 1/24\u00b0", "pts": pts, "s": ss, "d": dd}
 except Exception as e:
@@ -137,7 +153,7 @@ def om_wind(model, step):
             if key in seen: continue
             seen.add(key)
             h = L.get("hourly", {}); tt = h.get("time", [])
-            rs, rd = [None] * 169, [None] * 169
+            rs, rd = [None] * N, [None] * N
             for k, t in enumerate(tt):
                 i = IDX.get(t)
                 if i is None: continue
@@ -145,7 +161,7 @@ def om_wind(model, step):
             pts.append([round(L["latitude"], 4), round(L["longitude"], 4)]); ss.append(rs); dd.append(rd)
         time.sleep(1)
     nn = sum(1 for r in ss for x in r if x is not None)
-    heures = sum(1 for i in range(169) if any(r[i] is not None for r in ss))
+    heures = sum(1 for i in range(N) if any(r[i] is not None for r in ss))
     say("vent %s : %d points, %d heures couvertes, %d valeurs" % (model, len(pts), heures, nn))
     return {"pts": pts, "s": ss, "d": dd, "hours": heures, "n": nn}
 
