@@ -1,6 +1,6 @@
-OK 2026-09-17T10:00Z · 0 probleme(s)
+OK 2026-09-17T12:00Z · 0 probleme(s)
 houle CMEMS : 90 points, 15210 valeurs
 courant CMEMS : 90 points, 15210 valeurs
-vent italia_meteo_arpae_icon_2i : 419 points, 63 heures couvertes, 26397 valeurs
+vent italia_meteo_arpae_icon_2i : 419 points, 61 heures couvertes, 25559 valeurs
 vent ecmwf_ifs : 34 points, 169 heures couvertes, 5746 valeurs
-ecrit temoins.json : 943797 octets
+ecrit temoins.json : 945229 octets
