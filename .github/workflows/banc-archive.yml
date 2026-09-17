@@ -1,16 +1,23 @@
 name: Banc de fiabilite (archive quotidienne)
-# POURQUOI : etape 2 du banc des modeles de Malta Dive Atlas. Archive chaque jour
-# les previsions des modeles candidats et les observations (LMML, CALYPSO) pour
-# juger la fiabilite en prevision. Une seule etape tolerante : le rapport
-# data/banc/last-run.txt est commite quoi qu'il arrive, puis le job echoue
-# visiblement s'il y a un probleme (une session ne lit pas les logs).
+# POURQUOI : etape 2 du banc des modeles de Malta Dive Atlas. Chaque jour :
+# 1) previsions des modeles candidats et observations (LMML, CALYPSO) ;
+# 2) previsions Copernicus MEDSEA (17/09 : Nicolas veut le meme recul pour la
+#    houle et le courant qui font la carte a temoins) et recherche d'un arbitre
+#    de houle, aucun jeu de vagues CALYPSO n'etant ouvert ;
+# 3) etat du banc (jours archives, trous, regle d'arret) dans data/banc/etat.md.
+# Chaque etape ecrit son rapport ; le commit a lieu meme en echec, puis le job
+# echoue visiblement (une session ne lit pas les logs).
 on:
   schedule:
     - cron: "43 5 * * *"
   workflow_dispatch: {}
   push:
     branches: [main]
-    paths: ['scripts/banc_archive.py', '.github/workflows/banc-archive.yml']
+    paths:
+      - 'scripts/banc_archive.py'
+      - 'scripts/banc_cmems.py'
+      - 'scripts/banc_hebdo.py'
+      - '.github/workflows/banc-archive.yml'
 permissions:
   contents: write
 concurrency:
@@ -19,16 +26,23 @@ concurrency:
 jobs:
   archive:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with: { python-version: "3.11" }
+      - run: pip install "copernicusmarine>=2" xarray numpy
       - name: Archiver, commiter, signaler
+        env:
+          COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUS_USER }}
+          COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
         run: |
           set +e
           python scripts/banc_archive.py
           CODE=$?
+          timeout 25m python scripts/banc_cmems.py
+          [ $? -ne 0 ] && CODE=1
+          python scripts/banc_hebdo.py
           git config user.name "banc-archive-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/banc
