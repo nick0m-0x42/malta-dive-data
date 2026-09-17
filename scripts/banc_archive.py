@@ -24,6 +24,12 @@ L'hypothese precedente (depassement des 30 min) etait fausse ; la recherche
 des vagues reste bornee par prudence. Desormais le rapport est ecrit apres
 chaque etape, toute exception imprevue l'ecrit aussi, et une alarme arrete le
 script proprement a 20 min en disant ou il s'est arrete.
+17/09 21h : le job passait au rouge des qu'une donnee manquait chez le
+fournisseur, ce qui confond « notre chaine est cassee » et « la donnee n'existe
+pas ». Deux etats distincts desormais : PROBLEME (notre chaine, le job echoue)
+et MANQUE (amont, le job reste vert et le rapport le dit). Sans cette
+distinction, une absence permanente rendait chaque run quotidien rouge et plus
+personne ne regardait la couleur.
 """
 import datetime as dt, gzip, io, json, pathlib, signal, sys, time
 import urllib.request, urllib.parse
@@ -34,11 +40,13 @@ TODAY = dt.datetime.utcnow().strftime("%Y-%m-%d")
 LOG, PROBLEMES = [], []
 def say(s): print(s, flush=True); LOG.append(s)
 def pb(s): say("PROBLEME " + s); PROBLEMES.append(s)
+MANQUES = []
+def mq(s): say("MANQUE " + s); MANQUES.append(s)   # amont : ne fait pas echouer le job
 T0 = time.time()
 def report(etape):
     say("-- etape %s terminee a %.0f s" % (etape, time.time() - T0))
     tete = ("OK " if not PROBLEMES else "ECHEC ") + dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ") + \
-           " · %d probleme(s) · derniere etape : %s" % (len(PROBLEMES), etape)
+           " · %d probleme(s) · %d manque(s) amont · derniere etape : %s" % (len(PROBLEMES), len(MANQUES), etape)
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "last-run.txt").write_text(tete + "\n" + "\n".join(LOG) + "\n", encoding="utf-8")
 def alarme(signum, frame):
@@ -199,7 +207,7 @@ if vague:
     say("jeu vagues CALYPSO : %s, variable %s" % vague)
     calypso(vague[0], [vague[1]], "vagues")
 else:
-    pb("aucun jeu de vagues CALYPSO ouvert trouve sur ERDDAP (a chercher ailleurs)")
+    mq("aucun jeu de vagues CALYPSO ouvert sur ERDDAP : arbitre de houle cherche chez Copernicus (banc_cmems.py)")
 
 # --- rapport ------------------------------------------------------------------
 signal.alarm(0)
