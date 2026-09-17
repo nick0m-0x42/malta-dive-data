@@ -1,0 +1,41 @@
+name: Banc de fiabilite (archive quotidienne)
+# POURQUOI : etape 2 du banc des modeles de Malta Dive Atlas. Archive chaque jour
+# les previsions des modeles candidats et les observations (LMML, CALYPSO) pour
+# juger la fiabilite en prevision. Une seule etape tolerante : le rapport
+# data/banc/last-run.txt est commite quoi qu'il arrive, puis le job echoue
+# visiblement s'il y a un probleme (une session ne lit pas les logs).
+on:
+  schedule:
+    - cron: "43 5 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ['scripts/banc_archive.py', '.github/workflows/banc-archive.yml']
+permissions:
+  contents: write
+concurrency:
+  group: banc-archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.11" }
+      - name: Archiver, commiter, signaler
+        run: |
+          set +e
+          python scripts/banc_archive.py
+          CODE=$?
+          git config user.name "banc-archive-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/banc
+          if git diff --cached --quiet; then
+            echo "Rien a commiter."
+          else
+            git commit -m "banc: archive $(date -u +%F) (code $CODE)"
+            git pull --rebase --autostash && git push || { echo "::error::push rejete"; CODE=1; }
+          fi
+          exit $CODE
