@@ -14,13 +14,18 @@ fiabilite se mesure en prevision, contre des observations reelles, sur au moins
 Il ne calcule aucun verdict : il amasse. Le verdict est un script separe.
 Regle du projet : un 200 ne prouve rien, on compte les valeurs non vides, et
 tout manque est ecrit dans le rapport, jamais masque.
-17/09 : le premier run a depasse le plafond de 30 min en sondant un par un tous
-les jeux CALYPSO ; la recherche des vagues est bornee et les delais raccourcis.
 Sortie : data/banc/prev/<date>.json.gz, data/banc/obs/<source>/<date>.*.gz,
 data/banc/last-run.txt (une ligne OK/ECHEC puis le detail).
 Idempotent : une date deja archivee est reecrite a l'identique ou completee.
+17/09 soir : aucun rapport n'avait jamais ete commite. Cause trouvee par un
+essai a blanc : gzip.open() refuse le parametre mtime, le script plantait juste
+apres les previsions, avant tout fichier ; le job n'avait rien a commiter.
+L'hypothese precedente (depassement des 30 min) etait fausse ; la recherche
+des vagues reste bornee par prudence. Desormais le rapport est ecrit apres
+chaque etape, toute exception imprevue l'ecrit aussi, et une alarme arrete le
+script proprement a 20 min en disant ou il s'est arrete.
 """
-import datetime as dt, gzip, io, json, pathlib, sys, time
+import datetime as dt, gzip, io, json, pathlib, signal, sys, time
 import urllib.request, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -29,6 +34,26 @@ TODAY = dt.datetime.utcnow().strftime("%Y-%m-%d")
 LOG, PROBLEMES = [], []
 def say(s): print(s, flush=True); LOG.append(s)
 def pb(s): say("PROBLEME " + s); PROBLEMES.append(s)
+T0 = time.time()
+def report(etape):
+    say("-- etape %s terminee a %.0f s" % (etape, time.time() - T0))
+    tete = ("OK " if not PROBLEMES else "ECHEC ") + dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ") + \
+           " · %d probleme(s) · derniere etape : %s" % (len(PROBLEMES), etape)
+    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "last-run.txt").write_text(tete + "\n" + "\n".join(LOG) + "\n", encoding="utf-8")
+def alarme(signum, frame):
+    pb("delai de 20 min depasse, arret propre")
+    report("interrompu")
+    sys.exit(1)
+def imprevu(tp, val, tb):
+    import traceback
+    pb("exception imprevue : " + "".join(traceback.format_exception_only(tp, val)).strip())
+    say("".join(traceback.format_tb(tb))[-800:])
+    report("exception")
+    sys.exit(1)
+sys.excepthook = imprevu
+signal.signal(signal.SIGALRM, alarme)
+signal.alarm(20 * 60)
 
 def get(url, timeout=120, tries=3):
     last = None
@@ -49,7 +74,9 @@ def get(url, timeout=120, tries=3):
 
 def wgz(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    with gzip.open(path, "wb", compresslevel=9, mtime=0) as f:
+    # 17/09 : gzip.open() n'accepte pas mtime ; ce TypeError tuait chaque run
+    # avant le premier fichier, donc sans rien a commiter ni rapport.
+    with open(path, "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
         f.write(data if isinstance(data, bytes) else data.encode("utf-8"))
 
 # --- points ---------------------------------------------------------------
@@ -106,6 +133,7 @@ for couche, url, model, hourly, extra in MODELES:
         pb("prevision %s : aucune valeur" % model)
     time.sleep(1)
 wgz(OUT / "prev" / (TODAY + ".json.gz"), json.dumps(prev, separators=(",", ":")))
+report("previsions")
 
 # --- 2. observations LMML (IEM), 2 jours -------------------------------------
 d0 = dt.date.today() - dt.timedelta(days=2); d1 = dt.date.today()
@@ -118,6 +146,7 @@ rows = [l for l in body.decode("utf-8", "replace").splitlines() if l.startswith(
 say("observation LMML : HTTP %s, %d lignes" % (st, len(rows)))
 if not rows: pb("LMML vide")
 else: wgz(OUT / "obs" / "lmml" / (TODAY + ".csv.gz"), body)
+report("LMML")
 
 # --- 3. CALYPSO : decouverte des jeux, courants, vagues ------------------------
 ERD = "https://erddap.hfrnode.eu/erddap"
@@ -131,6 +160,7 @@ if st == 200:
     tab = json.loads(body)["table"]; ci = tab["columnNames"].index("Dataset ID")
     jeux = [r[ci] for r in tab["rows"]]
 say("jeux CALYPSO sur ERDDAP : " + (", ".join(jeux) if jeux else "aucun (HTTP %s)" % st))
+report("recherche CALYPSO")
 
 def calypso(ds, variables, tag):
     q = ",".join("%s[(%s):1:(%s)][0]%s" % (v, t0, t1, BOX) for v in variables)
@@ -148,10 +178,11 @@ def calypso(ds, variables, tag):
     else: wgz(OUT / "obs" / ("calypso-" + tag) / (TODAY + ".csv.gz"), body)
 
 calypso("EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3", ["EWCT", "NSCT"], "courant")
+report("CALYPSO courant")
 
 # Vagues : on cherche un jeu CALYPSO qui porte une hauteur significative.
 vague = None
-cands = [j for j in jeux if "wav" in j.lower()][:6]  # borne : le run du 17/09 a depasse 30 min
+cands = [j for j in jeux if "wav" in j.lower()][:6]  # borne par prudence
 say("candidats vagues CALYPSO : " + (", ".join(cands) if cands else "aucun"))
 for ds in cands:
     st, das = get("%s/griddap/%s.das" % (ERD, ds), timeout=30, tries=1)
@@ -169,9 +200,7 @@ else:
     pb("aucun jeu de vagues CALYPSO ouvert trouve sur ERDDAP (a chercher ailleurs)")
 
 # --- rapport ------------------------------------------------------------------
-tete = ("OK " if not PROBLEMES else "ECHEC ") + dt.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ") + \
-       " · %d probleme(s)" % len(PROBLEMES)
-(OUT).mkdir(parents=True, exist_ok=True)
-(OUT / "last-run.txt").write_text(tete + "\n" + "\n".join(LOG) + "\n", encoding="utf-8")
-print(tete)
+signal.alarm(0)
+report("fin")
+print(open(OUT / "last-run.txt", encoding="utf-8").readline().strip())
 sys.exit(1 if PROBLEMES else 0)
