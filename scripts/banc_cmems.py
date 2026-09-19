@@ -19,8 +19,17 @@ son rapport, donc sans rien apprendre. Deux corrections : le rapport est ecrit
 apres chaque etape, et l'inventaire du catalogue (deux appels `describe` qui
 balaient tout Copernicus, la partie lente) n'est refait que si arbitre-houle.txt
 a plus de 7 jours. La fenetre de lecture des arbitres passe a 24 h.
+19/09 : les runs du 18 et du 19 (code 1, mail « All jobs have failed ») avaient
+POURTANT tout archive : previsions, Copernicus, LMML, CALYPSO, tous OK. Le
+plafond de 25 min tuait le script pendant la lecture des BOUEES in situ
+(`cmems_obs-ins_med_phybgcwav_mynrt_na_irr`, 24 h sur la boite : read_dataframe
+tire un jeu enorme) ; arbitre-houle.txt s'arretait apres l'altimetrie, et
+`timeout` rendait 124 apres que cmems-run.txt avait dit OK. Correction : chaque
+candidat d'arbitre a son propre budget (BUDGET_S, 6 min, signal.alarm) ; un
+depassement s'ecrit « ECHEC delai » dans le rapport et n'est PAS une panne de
+l'archive, la recherche d'arbitre etant une exploration, pas une donnee du banc.
 """
-import datetime as dt, gzip, json, pathlib, subprocess, sys, time, traceback
+import datetime as dt, gzip, json, pathlib, signal, subprocess, sys, time, traceback
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "banc"
@@ -135,9 +144,16 @@ def tableau(ds_id, jours, **extra):
 
 ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 1),
        ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 1)]
+BUDGET_S = 6 * 60  # par candidat ; le 18 et le 19/09, les bouees seules depassaient 20 min
+class Delai(Exception): pass
+def _alarme(signum, frame): raise Delai("budget de %d s depasse" % BUDGET_S)
+signal.signal(signal.SIGALRM, _alarme)
 for tag, ds_id, jours in ARB:
+    tdeb = time.time()
     try:
+        signal.alarm(BUDGET_S)
         df = tableau(ds_id, jours)
+        signal.alarm(0)
         n = len(df)
         cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE"))]
         ar("%s %s : %d lignes sur la zone en %d jours, colonnes de houle : %s"
@@ -149,8 +165,12 @@ for tag, ds_id, jours in ARB:
             ar("  -> archive : obs/houle-%s/%s.csv.gz" % (tag, TODAY))
         else:
             ar("  -> rien a archiver (aucune ligne ou aucune colonne de houle)")
+    except Delai as e:
+        ar("%s %s : ECHEC delai, %s apres %d s ; candidat a requeter par plateforme, pas par boite" % (tag, ds_id, e, time.time() - tdeb))
     except Exception as e:
         ar("%s %s : ECHEC %s" % (tag, ds_id, repr(e)[:220]))
+    finally:
+        signal.alarm(0)
     rapport("arbitre-houle.txt", AR)   # a chaque candidat : un arret net laisse quand meme une trace
 rapport("arbitre-houle.txt", AR)
 sys.exit(1 if PB else 0)
