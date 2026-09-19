@@ -25,11 +25,16 @@ plafond de 25 min tuait le script pendant la lecture des BOUEES in situ
 (`cmems_obs-ins_med_phybgcwav_mynrt_na_irr`, 24 h sur la boite : read_dataframe
 tire un jeu enorme) ; arbitre-houle.txt s'arretait apres l'altimetrie, et
 `timeout` rendait 124 apres que cmems-run.txt avait dit OK. Correction : chaque
-candidat d'arbitre a son propre budget (BUDGET_S, 6 min, signal.alarm) ; un
-depassement s'ecrit « ECHEC delai » dans le rapport et n'est PAS une panne de
-l'archive, la recherche d'arbitre etant une exploration, pas une donnee du banc.
+candidat d'arbitre a son propre budget (BUDGET_S, 6 min) ; un depassement
+s'ecrit « ECHEC delai » dans le rapport et n'est PAS une panne de l'archive, la
+recherche d'arbitre etant une exploration, pas une donnee du banc.
+19/09 09h : la premiere version du budget (signal.alarm) n'a rien change, run
+de 06:54 tue a 25 min a l'identique : le signal attend que l'appel bloquant de
+copernicusmarine (I/O en C) rende la main, ce qu'il ne fait pas. Le budget est
+donc un SOUS-PROCESSUS par candidat (`--candidat TAG`), tue a l'echeance par
+subprocess.run(timeout=...) : rien en Python ne peut l'ignorer.
 """
-import datetime as dt, gzip, json, pathlib, signal, subprocess, sys, time, traceback
+import datetime as dt, gzip, json, pathlib, subprocess, sys, time, traceback
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "banc"
@@ -37,6 +42,8 @@ TODAY = dt.datetime.utcnow().strftime("%Y-%m-%d")
 LOG, PB = [], []
 def say(s): print(s, flush=True); LOG.append(str(s))
 def pb(s): say("PROBLEME " + str(s)); PB.append(str(s))
+# Sous-processus d'un candidat d'arbitre : il saute l'archive et l'inventaire.
+CANDIDAT = sys.argv[2] if len(sys.argv) >= 3 and sys.argv[1] == "--candidat" else None
 
 POINTS = {  # memes points que banc_archive.py
     "N-Gozo": (36.1200, 14.2500), "N-Comino": (36.0600, 14.3400),
@@ -64,7 +71,7 @@ t1 = t0 + dt.timedelta(days=7)
 JEUX = [("houle", "cmems_mod_med_wav_anfc_4.2km_PT1H-i", ["VHM0", "VMDR", "VTPK"]),
         ("courant", "cmems_mod_med_phy-cur_anfc_4.2km-2D_PT1H-m", ["uo", "vo"])]
 arch = {"emis": t0.strftime("%Y-%m-%dT%H:%MZ"), "points": POINTS, "jeux": {}}
-for couche, ds_id, vars_ in JEUX:
+for couche, ds_id, vars_ in ([] if CANDIDAT else JEUX):
     try:
         ds = copernicusmarine.open_dataset(dataset_id=ds_id, variables=vars_,
             start_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), end_datetime=t1.strftime("%Y-%m-%dT%H:%M:%S"), **BOX)
@@ -91,7 +98,8 @@ if arch["jeux"]:
     with open(p, "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
         f.write(json.dumps(arch, separators=(",", ":")).encode("utf-8"))
     say("ecrit %s" % p.name)
-rapport("cmems-run.txt", [("OK " if not PB else "ECHEC ") + t0.strftime("%Y-%m-%dT%H:%MZ")] + LOG)
+if not CANDIDAT:
+    rapport("cmems-run.txt", [("OK " if not PB else "ECHEC ") + t0.strftime("%Y-%m-%dT%H:%MZ")] + LOG)
 
 # --- 2. arbitre de houle : que propose le catalogue Copernicus ? -------------
 AR = ["Recherche d'un arbitre de houle, %s UTC" % t0.strftime("%Y-%m-%d %H:%M"),
@@ -124,8 +132,8 @@ try:
     age = (dt.datetime.utcnow().timestamp() - (OUT / "arbitre-houle.txt").stat().st_mtime) / 86400
 except OSError:
     age = None
-faire_inventaire = age is None or age >= 7
-if not faire_inventaire:
+faire_inventaire = (age is None or age >= 7) and not CANDIDAT
+if not faire_inventaire and not CANDIDAT:
     ar("inventaire du catalogue saute : rapport vieux de %.1f jour(s), refait a 7 jours" % age)
 for motif, quoi in (MOTIFS if faire_inventaire else []):
     js = ids(describe(motif))
@@ -145,32 +153,42 @@ def tableau(ds_id, jours, **extra):
 ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 1),
        ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 1)]
 BUDGET_S = 6 * 60  # par candidat ; le 18 et le 19/09, les bouees seules depassaient 20 min
-class Delai(Exception): pass
-def _alarme(signum, frame): raise Delai("budget de %d s depasse" % BUDGET_S)
-signal.signal(signal.SIGALRM, _alarme)
+
+def candidat(tag, ds_id, jours):
+    """Un candidat, execute dans le sous-processus : imprime ses lignes de rapport."""
+    df = tableau(ds_id, jours)
+    n = len(df)
+    cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE"))]
+    print("%s %s : %d lignes sur la zone en %d jours, colonnes de houle : %s"
+          % (tag, ds_id, n, jours, ", ".join(map(str, cols)) or "aucune"), flush=True)
+    if n and cols:
+        d = OUT / "obs" / ("houle-" + tag); d.mkdir(parents=True, exist_ok=True)
+        with open(d / (TODAY + ".csv.gz"), "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
+            f.write(df.to_csv(index=False).encode("utf-8"))
+        print("  -> archive : obs/houle-%s/%s.csv.gz" % (tag, TODAY), flush=True)
+    else:
+        print("  -> rien a archiver (aucune ligne ou aucune colonne de houle)", flush=True)
+
+if CANDIDAT:
+    for tag, ds_id, jours in ARB:
+        if tag == CANDIDAT:
+            candidat(tag, ds_id, jours)
+    sys.exit(0)
+
 for tag, ds_id, jours in ARB:
     tdeb = time.time()
     try:
-        signal.alarm(BUDGET_S)
-        df = tableau(ds_id, jours)
-        signal.alarm(0)
-        n = len(df)
-        cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE"))]
-        ar("%s %s : %d lignes sur la zone en %d jours, colonnes de houle : %s"
-           % (tag, ds_id, n, jours, ", ".join(map(str, cols)) or "aucune"))
-        if n and cols:
-            d = OUT / "obs" / ("houle-" + tag); d.mkdir(parents=True, exist_ok=True)
-            with open(d / (TODAY + ".csv.gz"), "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
-                f.write(df.to_csv(index=False).encode("utf-8"))
-            ar("  -> archive : obs/houle-%s/%s.csv.gz" % (tag, TODAY))
-        else:
-            ar("  -> rien a archiver (aucune ligne ou aucune colonne de houle)")
-    except Delai as e:
-        ar("%s %s : ECHEC delai, %s apres %d s ; candidat a requeter par plateforme, pas par boite" % (tag, ds_id, e, time.time() - tdeb))
+        r = subprocess.run([sys.executable, __file__, "--candidat", tag],
+                           capture_output=True, text=True, timeout=BUDGET_S)
+        for l in (r.stdout or "").splitlines():
+            ar(l)
+        if r.returncode != 0:
+            ar("%s %s : ECHEC code %d : %s" % (tag, ds_id, r.returncode, (r.stderr or "").strip()[-220:]))
+    except subprocess.TimeoutExpired:
+        ar("%s %s : ECHEC delai, budget de %d s depasse apres %d s ; candidat a requeter par plateforme, pas par boite"
+           % (tag, ds_id, BUDGET_S, time.time() - tdeb))
     except Exception as e:
         ar("%s %s : ECHEC %s" % (tag, ds_id, repr(e)[:220]))
-    finally:
-        signal.alarm(0)
     rapport("arbitre-houle.txt", AR)   # a chaque candidat : un arret net laisse quand meme une trace
 rapport("arbitre-houle.txt", AR)
 sys.exit(1 if PB else 0)
