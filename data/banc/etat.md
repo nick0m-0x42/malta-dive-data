@@ -1,15 +1,15 @@
 # Etat du banc de fiabilite
 
-Genere le 2026-09-21 par scripts/banc_hebdo.py. Chiffres lus dans data/banc/, jamais supposes.
+Genere le 2026-09-22 par scripts/banc_hebdo.py. Chiffres lus dans data/banc/, jamais supposes.
 
-Premier jour archive : **2026-09-17**. Jours ecoules depuis : **5**.
+Premier jour archive : **2026-09-17**. Jours ecoules depuis : **6**.
 
 | source | jours | dernier | manquants depuis le debut |
 |---|---|---|---|
-| previsions (GFS, IFS, ICON-EU, ICON-2I, WAM, Meteo-France, GFS Wave, courants) | 5 | 2026-09-21 | aucun |
-| previsions Copernicus MEDSEA (houle, courant) | 5 | 2026-09-21 | aucun |
-| observations METAR Luqa (LMML) | 5 | 2026-09-21 | aucun |
-| observations courants CALYPSO | 5 | 2026-09-21 | aucun |
+| previsions (GFS, IFS, ICON-EU, ICON-2I, WAM, Meteo-France, GFS Wave, courants) | 6 | 2026-09-22 | aucun |
+| previsions Copernicus MEDSEA (houle, courant) | 6 | 2026-09-22 | aucun |
+| observations METAR Luqa (LMML) | 6 | 2026-09-22 | aucun |
+| observations courants CALYPSO | 6 | 2026-09-22 | aucun |
 | observations vagues CALYPSO | 0 | — | jamais archive |
 
 ## Regle d'arret
@@ -21,7 +21,7 @@ a chaque echeance J+1, J+3, J+6. Sinon on prolonge.
 
 ## Dernier run
 ```
-OK 2026-09-21T05:50Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
+OK 2026-09-22T05:49Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
 prevision gfs_seamless                 4536/4536 valeurs non vides
 prevision ecmwf_ifs                    4536/4536 valeurs non vides
 prevision icon_eu                      3267/4536 valeurs non vides
@@ -32,10 +32,10 @@ prevision ncep_gfswave016              4536/4536 valeurs non vides
 prevision meteofrance_currents         3024/3024 valeurs non vides
 -- etape previsions terminee a 15 s
 observation LMML : HTTP 200, 96 lignes
--- etape LMML terminee a 16 s
+-- etape LMML terminee a 17 s
 jeux CALYPSO sur ERDDAP : EUHFR_NRTcurrent_HFR-CALYPSO-BARK_v3, EUHFR_NRTcurrent_HFR-CALYPSO-CENC_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LAPS_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LICA_v3, EUHFR_NRTcurrent_HFR-CALYPSO-MRAG_v3, EUHFR_NRTcurrent_HFR-CALYPSO-POZZ_v3, EUHFR_NRTcurrent_HFR-CALYPSO-SOPU_v3, EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3
 -- etape recherche CALYPSO terminee a 18 s
-observation CALYPSO courant : 13824 lignes, 48 heures, 8634 lignes renseignees
+observation CALYPSO courant : 13824 lignes, 48 heures, 7838 lignes renseignees
 -- etape CALYPSO courant terminee a 20 s
 candidats vagues CALYPSO : aucun
 MANQUE aucun jeu de vagues CALYPSO ouvert sur ERDDAP : arbitre de houle cherche chez Copernicus (banc_cmems.py)
@@ -44,12 +44,12 @@ MANQUE aucun jeu de vagues CALYPSO ouvert sur ERDDAP : arbitre de houle cherche 
 
 ## Dernier run Copernicus
 ```
-OK 2026-09-21T05:00Z
+OK 2026-09-22T05:00Z
 ```
 
 ## Arbitre de houle
 ```
-Recherche d'un arbitre de houle, 2026-09-21 05:00 UTC
+Recherche d'un arbitre de houle, 2026-09-22 05:00 UTC
 Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
 inventaire du catalogue saute : rapport vieux de 0.0 jour(s), refait a 7 jours
 altimetrie cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 0 lignes sur la zone en 1 jours, colonnes de houle : aucune
