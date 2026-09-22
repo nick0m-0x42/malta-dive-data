@@ -151,11 +151,75 @@ def tableau(ds_id, jours, **extra):
         end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **dict(BOX, **extra))
 
 ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 1),
+       ("plateformes", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 0),
        ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 1)]
+# 22/09 : la lecture des bouees PAR BOITE depasse le budget depuis le 18/09. Avant de
+# lire les mesures, il faut savoir QUELLES plateformes existent pres de Malte : le
+# candidat « plateformes » telecharge les fichiers d'index du produit in situ
+# (`copernicusmarine get --index-parts`, quelques Mo, pas les mesures) et liste les
+# plateformes a moins de 100 km de Malte qui publient VHM0 (hauteur significative),
+# avec leur derniere observation. Cible connue : la bouee BLUE de l'Universite de
+# Malte (OMRG), mouillee a 3,7 km du Grand Harbour depuis juillet 2025, vagues,
+# vent, courant, « partagee avec les institutions europeennes » (um.edu.mt, 07/2025) ;
+# son code de plateforme n'est pas connu, on ne le devine pas, on le lit.
+MALTE = (35.95, 14.40)
+RAYON_KM = 100
+
+def plateformes():
+    import csv, io, math, os, tempfile
+    d = tempfile.mkdtemp(prefix="cmems-index-")
+    r = subprocess.run(["copernicusmarine", "get", "--dataset-id", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr",
+                        "--index-parts", "-o", d, "--disable-progress-bar"], capture_output=True, text=True, timeout=BUDGET_S - 30)
+    fichiers = [os.path.join(dp, f) for dp, _, fs in os.walk(d) for f in fs]
+    print("plateformes : get --index-parts code %d, %d fichier(s) : %s" % (r.returncode, len(fichiers), ", ".join(sorted(os.path.basename(f) for f in fichiers)) or "aucun"), flush=True)
+    if r.returncode != 0:
+        print("  stderr : " + (r.stderr or "").strip()[-300:], flush=True)
+    idx = [f for f in fichiers if os.path.basename(f).startswith("index_platform")]
+    if not idx:
+        print("  -> index_platform absent, rien a lire", flush=True); return
+    txt = open(idx[0], encoding="utf-8", errors="replace").read()
+    # Format Copernicus in situ : lignes de commentaire en « # », et l'EN-TETE lui-meme
+    # commence par « # » (« # platform_code,creation_date,... ») : on le retrouve par son
+    # contenu au lieu de jeter toutes les lignes « # ».
+    brut = txt.splitlines()
+    hdr = next((l for l in brut if "platform_code" in l), None)
+    if not hdr:
+        print("  -> en-tete platform_code introuvable ; 3 premieres lignes : %r" % brut[:3], flush=True); return
+    lignes = [hdr.lstrip("# ").strip()] + [l for l in brut if l and not l.startswith("#")]
+    rows = list(csv.DictReader(io.StringIO("\n".join(lignes))))
+    print("  index_platform : %d plateforme(s) dans le produit, colonnes : %s" % (len(rows), ", ".join(rows[0].keys()) if rows else "?"), flush=True)
+    def dist(la, lo):
+        la1, lo1, la2, lo2 = map(math.radians, (MALTE[0], MALTE[1], la, lo))
+        return 6371 * math.acos(min(1, math.sin(la1) * math.sin(la2) + math.cos(la1) * math.cos(la2) * math.cos(lo2 - lo1)))
+    proches = []
+    for row in rows:
+        try:
+            la = float(row.get("last_latitude_observation") or row.get("latitude") or "nan")
+            lo = float(row.get("last_longitude_observation") or row.get("longitude") or "nan")
+        except ValueError:
+            continue
+        if la != la or lo != lo: continue
+        km = dist(la, lo)
+        if km <= RAYON_KM:
+            proches.append((km, row))
+    proches.sort(key=lambda x: x[0])
+    print("  plateformes a moins de %d km de Malte : %d" % (RAYON_KM, len(proches)), flush=True)
+    for km, row in proches:
+        params = row.get("parameters", "")
+        print("  %6.1f km  %-16s %-22s VHM0=%s  derniere obs %s  params=%s" % (
+            km, row.get("platform_code", "?"), (row.get("platform_name") or row.get("wmo_platform_code") or "")[:22],
+            "OUI" if "VHM0" in params else "non", row.get("last_date_observation", "?"), params[:90]), flush=True)
+    if not any("VHM0" in r.get("parameters", "") for _, r in proches):
+        print("  -> AUCUNE plateforme a houle a moins de %d km : conclure qu'il n'y a pas d'arbitre de houle in situ, ou verifier si BLUE (OMRG) est publiee ailleurs" % RAYON_KM, flush=True)
+    else:
+        print("  -> prochain pas : lire les mesures de ces seules plateformes (read_dataframe avec platform_ids), pas la boite", flush=True)
+
 BUDGET_S = 6 * 60  # par candidat ; le 18 et le 19/09, les bouees seules depassaient 20 min
 
 def candidat(tag, ds_id, jours):
     """Un candidat, execute dans le sous-processus : imprime ses lignes de rapport."""
+    if tag == "plateformes":
+        return plateformes()
     df = tableau(ds_id, jours)
     n = len(df)
     cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE"))]
