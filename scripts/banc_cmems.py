@@ -151,8 +151,14 @@ def tableau(ds_id, jours, **extra):
         end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **dict(BOX, **extra))
 
 ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 1),
-       ("plateformes", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 0),
-       ("bouees", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 1)]
+       ("plateformes", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 0)]
+# 23/09 : verdict du candidat « plateformes » (run du 23/09 05:00Z) : 44 plateformes
+# a moins de 100 km, AUCUNE ne publie VHM0, BLUE (OMRG) absente. Le candidat
+# « bouees » (lecture par boite, 6 min de budget brules chaque jour depuis le 18/09)
+# est retire : il n'y a rien a lire. « plateformes » ne tourne plus qu'une fois par
+# semaine (le lundi) pour voir si BLUE ou une autre plateforme a houle apparait.
+if dt.datetime.utcnow().weekday() != 0:
+    ARB = [c for c in ARB if c[0] != "plateformes"]
 # 22/09 : la lecture des bouees PAR BOITE depasse le budget depuis le 18/09. Avant de
 # lire les mesures, il faut savoir QUELLES plateformes existent pres de Malte : le
 # candidat « plateformes » telecharge les fichiers d'index du produit in situ
