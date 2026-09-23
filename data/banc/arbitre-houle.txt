@@ -1,10 +1,10 @@
-Recherche d'un arbitre de houle, 2026-09-22 09:00 UTC
+Recherche d'un arbitre de houle, 2026-09-23 05:00 UTC
 Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
 inventaire du catalogue saute : rapport vieux de 0.0 jour(s), refait a 7 jours
 altimetrie cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 0 lignes sur la zone en 1 jours, colonnes de houle : aucune
   -> rien a archiver (aucune ligne ou aucune colonne de houle)
 plateformes : get --index-parts code 0, 4 fichier(s) : index_history.txt, index_latest.txt, index_monthly.txt, index_platform.txt
-  index_platform : 5078 plateforme(s) dans le produit, colonnes : platform_code, creation_date, update_date, wmo_platform_code, data_source, institution, institution_edmo_code, parameters, last_latitude_observation, last_longitude_observation, last_date_observation
+  index_platform : 5079 plateforme(s) dans le produit, colonnes : platform_code, creation_date, update_date, wmo_platform_code, data_source, institution, institution_edmo_code, parameters, last_latitude_observation, last_longitude_observation, last_date_observation
   plateformes a moins de 100 km de Malte : 44
      6.8 km  61853            61853                  VHM0=non  derniere obs 2013-02-21T06:30:10Z  params= DEPH EWCT NSCT TEMP
      7.3 km  IDSL-Malta                              VHM0=non  derniere obs 2020-05-31T05:10:00Z  params= DEPH SLEV
