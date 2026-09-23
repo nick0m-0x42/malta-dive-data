@@ -4,7 +4,9 @@ name: Banc de fiabilite (archive quotidienne)
 # 2) previsions Copernicus MEDSEA (17/09 : Nicolas veut le meme recul pour la
 #    houle et le courant qui font la carte a temoins) et recherche d'un arbitre
 #    de houle, aucun jeu de vagues CALYPSO n'etant ouvert ;
-# 3) etat du banc (jours archives, trous, regle d'arret) dans data/banc/etat.md.
+# 3) etat du banc (jours archives, trous, regle d'arret) dans data/banc/etat.md ;
+# 4) verdict du banc (23/09) : scores par modele, variable, echeance et facade,
+#    regle d'arret 28 j / 30 h / borne 45 j, dans data/banc/verdict.md et .json.
 # Chaque etape ecrit son rapport ; le commit a lieu meme en echec, puis le job
 # echoue visiblement (une session ne lit pas les logs).
 on:
@@ -17,6 +19,7 @@ on:
       - 'scripts/banc_archive.py'
       - 'scripts/banc_cmems.py'
       - 'scripts/banc_hebdo.py'
+      - 'scripts/banc_verdict.py'
       - '.github/workflows/banc-archive.yml'
 permissions:
   contents: write
@@ -43,6 +46,7 @@ jobs:
           timeout 25m python scripts/banc_cmems.py
           [ $? -ne 0 ] && CODE=1
           python scripts/banc_hebdo.py
+          python scripts/banc_verdict.py > /dev/null || { echo "::warning::banc_verdict a echoue"; CODE=1; }
           git config user.name "banc-archive-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/banc
