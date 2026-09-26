@@ -1,14 +1,14 @@
 # Verdict du banc de fiabilite
 
-Genere le 2026-09-25 par scripts/banc_verdict.py. Chiffres lus dans data/banc/, jamais supposes.
+Genere le 2026-09-26 par scripts/banc_verdict.py. Chiffres lus dans data/banc/, jamais supposes.
 
-Archive depuis le **2026-09-17** : **9** jour(s) d'emissions. 28 jours le **2026-10-14**, borne des 45 jours le **2026-10-31**.
+Archive depuis le **2026-09-17** : **10** jour(s) d'emissions. 28 jours le **2026-10-14**, borne des 45 jours le **2026-10-31**.
 Seuils « ca compte » : vent > 25 km/h, houle > 0.5 m (et 0.8 m publie a cote), courant > 0.25 m/s.
 Echeances : J+1, J+3, J+6. Il faut 30 h qualifiantes par echeance.
 
 ## Vent
-Arbitre : LMML (METAR), 240 heures observees dont **6** au-dessus du seuil.
-**En attente** : 28 jours non atteints (9/28).
+Arbitre : LMML (METAR), 264 heures observees dont **6** au-dessus du seuil.
+**En attente** : 28 jours non atteints (10/28).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
@@ -30,17 +30,17 @@ Arbitre : LMML (METAR), 240 heures observees dont **6** au-dessus du seuil.
 Voir data/banc/arbitre-houle.txt.
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 1009 heures observees dont **368** au-dessus du seuil.
-**En attente** : 28 jours non atteints (9/28).
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 1120 heures observees dont **403** au-dessus du seuil.
+**En attente** : 28 jours non atteints (10/28).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_courant | J+1 | 290 | 0.44 m/s | -0.44 | 0.46 | 0.50 | 0.19 |
-| copernicus_courant | J+3 | 222 | 0.43 m/s | -0.43 | 0.47 | 0.51 | 0.19 |
-| copernicus_courant | J+6 | 113 | 0.39 m/s | -0.39 | 0.39 | 0.51 | 0.20 |
-| meteofrance_currents | J+1 | 290 | 0.43 m/s | -0.43 | 0.44 | 0.49 | 0.22 |
-| meteofrance_currents | J+3 | 222 | 0.42 m/s | -0.42 | 0.44 | 0.49 | 0.23 |
-| meteofrance_currents | J+6 | 113 | 0.37 m/s | -0.37 | 0.36 | 0.49 | 0.23 |
+| copernicus_courant | J+1 | 325 | 0.45 m/s | -0.45 | 0.46 | 0.52 | 0.19 |
+| copernicus_courant | J+3 | 257 | 0.45 m/s | -0.45 | 0.47 | 0.53 | 0.18 |
+| copernicus_courant | J+6 | 148 | 0.41 m/s | -0.41 | 0.40 | 0.56 | 0.19 |
+| meteofrance_currents | J+1 | 325 | 0.44 m/s | -0.44 | 0.44 | 0.50 | 0.22 |
+| meteofrance_currents | J+3 | 257 | 0.43 m/s | -0.43 | 0.43 | 0.51 | 0.23 |
+| meteofrance_currents | J+6 | 148 | 0.40 m/s | -0.40 | 0.37 | 0.53 | 0.23 |
 
 ## Lecture
 Le verdict designe un modele par variable pour tout l'archipel ; les colonnes nord, est, sud
