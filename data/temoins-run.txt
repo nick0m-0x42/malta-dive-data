@@ -1,8 +1,7 @@
-ECHEC 2026-09-30T00:00Z · 1 probleme(s)
-fenetre : 2026-09-30T00:00 -> 2026-10-07T02:00, 171 heures (dont 2 deja ecoulees)
-houle CMEMS : 90 points, 15390 valeurs
-courant CMEMS : 90 points, 15390 valeurs, 171 heures couvertes sur 171
-PROBLEME vent italia_meteo_arpae_icon_2i : lot 0 en echec (<HTTPError 503: 'Service Unavailable'>)
-vent italia_meteo_arpae_icon_2i : 355 points, 63 heures couvertes, 22365 valeurs
-vent ecmwf_ifs : 34 points, 171 heures couvertes, 5814 valeurs
-ecrit temoins.json : 830145 octets
+OK 2026-09-30T06:00Z · 0 probleme(s)
+fenetre : 2026-09-30T00:00 -> 2026-10-07T08:00, 177 heures (dont 8 deja ecoulees)
+houle CMEMS : 90 points, 15930 valeurs
+courant CMEMS : 90 points, 15930 valeurs, 177 heures couvertes sur 177
+vent italia_meteo_arpae_icon_2i : 419 points, 63 heures couvertes, 26397 valeurs
+vent ecmwf_ifs : 34 points, 177 heures couvertes, 6018 valeurs
+ecrit temoins.json : 963101 octets
