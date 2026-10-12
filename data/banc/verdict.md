@@ -1,27 +1,27 @@
 # Verdict du banc de fiabilite
 
-Genere le 2026-10-11 par scripts/banc_verdict.py. Chiffres lus dans data/banc/, jamais supposes.
+Genere le 2026-10-12 par scripts/banc_verdict.py. Chiffres lus dans data/banc/, jamais supposes.
 
-Archive depuis le **2026-09-17** : **25** jour(s) d'emissions. 28 jours le **2026-10-14**, borne des 45 jours le **2026-10-31**.
+Archive depuis le **2026-09-17** : **26** jour(s) d'emissions. 28 jours le **2026-10-14**, borne des 45 jours le **2026-10-31**.
 Seuils « ca compte » : vent > 25 km/h, houle > 0.5 m (et 0.8 m publie a cote), courant > 0.25 m/s.
 Echeances : J+1, J+3, J+6. Il faut 30 h qualifiantes par echeance.
 
 ## Vent
-Arbitre : LMML (METAR), 624 heures observees dont **13** au-dessus du seuil.
-**En attente** : 28 jours non atteints (25/28).
+Arbitre : LMML (METAR), 648 heures observees dont **22** au-dessus du seuil.
+**En attente** : 28 jours non atteints (26/28).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| ecmwf_ifs | J+1 | 13 | 9.82 km/h | -9.82 | — | 9.82 | — |
-| ecmwf_ifs | J+3 | 12 | 8.64 km/h | -8.64 | — | 8.64 | — |
-| ecmwf_ifs | J+6 | 12 | 14.41 km/h | -14.41 | — | 14.41 | — |
-| gfs_seamless | J+1 | 13 | 5.34 km/h | -3.01 | — | 5.34 | — |
-| gfs_seamless | J+3 | 12 | 7.07 km/h | -3.97 | — | 7.07 | — |
-| gfs_seamless | J+6 | 12 | 11.19 km/h | -11.19 | — | 11.19 | — |
-| icon_eu | J+1 | 13 | 13.91 km/h | -13.91 | — | 13.91 | — |
-| icon_eu | J+3 | 12 | 12.79 km/h | -12.79 | — | 12.79 | — |
+| ecmwf_ifs | J+1 | 22 | 8.41 km/h | -8.41 | — | 8.41 | — |
+| ecmwf_ifs | J+3 | 21 | 8.17 km/h | -8.17 | — | 8.17 | — |
+| ecmwf_ifs | J+6 | 21 | 16.73 km/h | -16.73 | — | 16.73 | — |
+| gfs_seamless | J+1 | 22 | 4.16 km/h | -1.35 | — | 4.16 | — |
+| gfs_seamless | J+3 | 21 | 5.54 km/h | -0.80 | — | 5.54 | — |
+| gfs_seamless | J+6 | 21 | 7.69 km/h | -7.69 | — | 7.69 | — |
+| icon_eu | J+1 | 22 | 13.14 km/h | -13.14 | — | 13.14 | — |
+| icon_eu | J+3 | 21 | 12.20 km/h | -12.20 | — | 12.20 | — |
 | icon_eu | J+6 | 0 | — | — | — | — | — |
-| italia_meteo_arpae_icon_2i | J+1 | 13 | 12.92 km/h | -12.92 | — | 12.92 | — |
+| italia_meteo_arpae_icon_2i | J+1 | 22 | 11.81 km/h | -11.81 | — | 11.81 | — |
 | italia_meteo_arpae_icon_2i | J+3 | 0 | — | — | — | — | — |
 | italia_meteo_arpae_icon_2i | J+6 | 0 | — | — | — | — | — |
 
@@ -30,17 +30,17 @@ Arbitre : LMML (METAR), 624 heures observees dont **13** au-dessus du seuil.
 Voir data/banc/arbitre-houle.txt.
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 2653 heures observees dont **830** au-dessus du seuil.
-**En attente** : 28 jours non atteints (25/28).
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 2753 heures observees dont **851** au-dessus du seuil.
+**En attente** : 28 jours non atteints (26/28).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_courant | J+1 | 752 | 0.48 m/s | -0.48 | 0.44 | 0.58 | 0.19 |
-| copernicus_courant | J+3 | 684 | 0.49 m/s | -0.49 | 0.45 | 0.60 | 0.19 |
-| copernicus_courant | J+6 | 575 | 0.47 m/s | -0.47 | 0.41 | 0.60 | 0.18 |
-| meteofrance_currents | J+1 | 752 | 0.45 m/s | -0.45 | 0.41 | 0.54 | 0.22 |
-| meteofrance_currents | J+3 | 684 | 0.45 m/s | -0.45 | 0.40 | 0.55 | 0.23 |
-| meteofrance_currents | J+6 | 575 | 0.44 m/s | -0.44 | 0.38 | 0.56 | 0.23 |
+| copernicus_courant | J+1 | 773 | 0.48 m/s | -0.48 | 0.44 | 0.58 | 0.18 |
+| copernicus_courant | J+3 | 705 | 0.49 m/s | -0.49 | 0.45 | 0.59 | 0.19 |
+| copernicus_courant | J+6 | 596 | 0.46 m/s | -0.46 | 0.41 | 0.59 | 0.18 |
+| meteofrance_currents | J+1 | 773 | 0.44 m/s | -0.44 | 0.41 | 0.53 | 0.22 |
+| meteofrance_currents | J+3 | 705 | 0.45 m/s | -0.45 | 0.40 | 0.54 | 0.23 |
+| meteofrance_currents | J+6 | 596 | 0.44 m/s | -0.44 | 0.38 | 0.54 | 0.23 |
 
 ## Lecture
 Le verdict designe un modele par variable pour tout l'archipel ; les colonnes nord, est, sud
