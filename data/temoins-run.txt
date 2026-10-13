@@ -1,7 +1,5 @@
-OK 2026-10-13T14:00Z · 0 probleme(s)
-fenetre : 2026-10-13T00:00 -> 2026-10-20T16:00, 185 heures (dont 16 deja ecoulees)
-houle CMEMS : 90 points, 16650 valeurs
-courant CMEMS : 90 points, 16650 valeurs, 185 heures couvertes sur 185
-vent italia_meteo_arpae_icon_2i : 419 points, 87 heures couvertes, 36453 valeurs
-vent ecmwf_ifs : 34 points, 185 heures couvertes, 6290 valeurs
-ecrit temoins.json : 1028283 octets
+ECHEC 2026-10-13T22:00Z · 1 probleme(s)
+fenetre : 2026-10-14T00:00 -> 2026-10-21T00:00, 169 heures (dont 0 deja ecoulees)
+PROBLEME Copernicus : CouldNotConnectToAuthenticationSystem()
+vent italia_meteo_arpae_icon_2i : 419 points, 63 heures couvertes, 26397 valeurs
+vent ecmwf_ifs : 34 points, 169 heures couvertes, 5746 valeurs
