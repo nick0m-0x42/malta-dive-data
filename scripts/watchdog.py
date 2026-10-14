@@ -294,7 +294,7 @@ def check_thermocline(j, now, prev):
             ref_ts, old = prev["ts"], prev.get("days") or {}
         elif prev.get("ts_prev"):
             ref_ts, old = prev["ts_prev"], prev.get("days_prev") or {}
-    if ref_ts:
+    if ref_ts and ref_ts != d.isoformat():   # jamais le produit contre lui-meme (issue #2)
         common = [k for k in hashes if k in old]
         if len(common) >= 6 and all(hashes[k] == old[k] for k in common):
             probs.append(f"donnees figees : {len(common)} profils identiques a ceux du produit du {ref_ts}")
@@ -440,8 +440,11 @@ def next_state(name, res, prev, acts, now, issue_number=None):
     if name == "thermocline":
         # On garde les profils du produit PRECEDENT tant que le jour n'a pas change,
         # pour comparer le produit du lendemain a celui de la veille.
-        if prev.get("ts") == res.get("ts") and prev.get("days_prev") is not None:
-            s["days_prev"], s["ts_prev"] = prev["days_prev"], prev.get("ts_prev")
+        # Correctif du 14/10 (issue #2, fausse alerte « donnees figees ») : meme jour, la
+        # reference de la veille est gardee TELLE QUELLE, meme absente ; avant, un premier
+        # passage sans veille rangeait le produit du jour comme sa propre reference.
+        if prev.get("ts") == res.get("ts"):
+            s["days_prev"], s["ts_prev"] = prev.get("days_prev"), prev.get("ts_prev")
         else:
             s["days_prev"], s["ts_prev"] = prev.get("days"), prev.get("ts")
         s["days"] = res.get("days") or {}
