@@ -1,5 +1,5 @@
-ECHEC 2026-10-13T22:00Z · 1 probleme(s)
-fenetre : 2026-10-14T00:00 -> 2026-10-21T00:00, 169 heures (dont 0 deja ecoulees)
+ECHEC 2026-10-14T05:00Z · 1 probleme(s)
+fenetre : 2026-10-14T00:00 -> 2026-10-21T07:00, 176 heures (dont 7 deja ecoulees)
 PROBLEME Copernicus : CouldNotConnectToAuthenticationSystem()
-vent italia_meteo_arpae_icon_2i : 419 points, 63 heures couvertes, 26397 valeurs
-vent ecmwf_ifs : 34 points, 169 heures couvertes, 5746 valeurs
+vent italia_meteo_arpae_icon_2i : 419 points, 75 heures couvertes, 31425 valeurs
+vent ecmwf_ifs : 34 points, 176 heures couvertes, 5984 valeurs
