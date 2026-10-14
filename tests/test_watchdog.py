@@ -146,6 +146,21 @@ class Thermocline(unittest.TestCase):
         r = w.check_thermocline(thermo("2026-10-14", shift=0.03), NOW, prev)
         self.assertFalse(any("figees" in p for p in r["problems"]), r["problems"])
 
+    def test_premier_passage_sans_veille(self):
+        """Issue #2 (14/10, 17:26 UTC) : etat vide, puis trois passages le meme jour.
+        Le produit du jour ne doit jamais devenir sa propre reference."""
+        acts = {"relaunch": False, "issue": None}
+        s = {}
+        for k in range(3):
+            t = NOW + dt.timedelta(minutes=30 * k)
+            r = w.check_thermocline(thermo("2026-10-14"), t, s)
+            self.assertEqual(r["state"], "ok", (k, r["problems"]))
+            s = w.next_state("thermocline", r, s, acts, t)
+        self.assertIsNone(s["ts_prev"])
+        # Etat deja corrompu par l'ancien code (reference = produit du jour) : ignore.
+        bad = dict(s, ts_prev="2026-10-14", days_prev=s["days"])
+        self.assertEqual(w.check_thermocline(thermo("2026-10-14"), NOW, bad)["state"], "ok")
+
     def test_etat_garde_la_veille(self):
         """Deux passages le meme jour puis un le lendemain : on compare toujours au
         produit PRECEDENT, jamais au produit lui-meme."""
