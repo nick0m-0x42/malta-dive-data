@@ -1,0 +1,31 @@
+name: Tests
+# POURQUOI (14/10, atlas#258) : controle des PR de ce depot. Tests du surveillant et
+# de la grille de l'instantane, compilation des scripts, lecture des workflows, puis
+# un passage a blanc du surveillant sur les donnees publiees (aucune ecriture GitHub :
+# son verdict sur les donnees est affiche, il ne fait pas echouer le controle du code).
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+    paths: ['scripts/**', 'tests/**', '.github/workflows/**']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.11" }
+      - run: pip install pyyaml
+      - name: Tests unitaires
+        run: python -m unittest discover -s tests -v
+      - name: Compilation et workflows lisibles
+        run: |
+          python -m py_compile scripts/*.py
+          python -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]; print('workflows OK')"
+      - name: Passage a blanc du surveillant sur les donnees publiees
+        run: |
+          python scripts/watchdog.py --dry-run --state /dev/null --out-state /tmp/e.json --report /tmp/r.md || true
+          cat /tmp/r.md >> "$GITHUB_STEP_SUMMARY"

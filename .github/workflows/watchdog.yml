@@ -1,0 +1,65 @@
+name: Watchdog collecte
+# POURQUOI (14/10/2026, atlas#258) : surveillant UNIQUE de la collecte meteo de l'atlas
+# v1 (instantane, thermocline, temoins, banc, et ce que lit le site en production).
+# Il remplace snapshot-watchdog.yml (instantane seul, seuil de 9 h, n'a jamais ouvert
+# d'issue). Regles, seuils et raisons : en-tete de scripts/watchdog.py ; tests :
+# tests/test_watchdog.py.
+# Declenchement : deux crons par heure (GitHub en perd : un seul cron perdu ne fait
+# plus passer une heure sans controle) et a la fin de chaque collecte.
+# Etat et rapport : branche orpheline watchdog-state (watchdog-state.json, rapport.md),
+# lisible sans les journaux Actions. Le job echoue quand une source est en panne.
+on:
+  schedule:
+    - cron: "7 * * * *"
+    - cron: "37 * * * *"
+  workflow_run:
+    workflows:
+      - "Weather snapshot (fallback Open-Meteo)"
+      - "Thermocline daily"
+      - "Temoins carte (flux dense)"
+      - "Banc de fiabilite (archive quotidienne)"
+    types: [completed]
+  workflow_dispatch: {}
+permissions:
+  contents: write   # branche watchdog-state
+  issues: write     # alertes
+  actions: write    # relance d'une collecte en retard (workflow_dispatch)
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.11" }
+      - name: Surveiller, relancer, signaler, publier l'etat
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          if git fetch -q --depth=1 origin watchdog-state 2>/dev/null; then
+            git show FETCH_HEAD:watchdog-state.json > /tmp/etat.json 2>/dev/null || echo '{}' > /tmp/etat.json
+          else
+            echo '{}' > /tmp/etat.json
+          fi
+          timeout 8m python scripts/watchdog.py --state /tmp/etat.json --out-state /tmp/etat-new.json --report /tmp/rapport.md
+          CODE=$?
+          if [ ! -s /tmp/etat-new.json ]; then
+            cp /tmp/etat.json /tmp/etat-new.json
+            echo "ECHEC le surveillant n'a pas abouti (code $CODE) $(date -u +%FT%H:%MZ)" > /tmp/rapport.md
+            CODE=1
+          fi
+          cat /tmp/rapport.md >> "$GITHUB_STEP_SUMMARY"
+          git config user.name "watchdog-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git checkout -q --orphan watchdog-state-publie
+          git rm -rq --cached .
+          cp /tmp/etat-new.json watchdog-state.json
+          cp /tmp/rapport.md rapport.md
+          git add -f watchdog-state.json rapport.md
+          git commit -qm "watchdog $(date -u +%FT%H:%MZ) (code $CODE)"
+          git push -qf origin HEAD:watchdog-state || { echo "::error::etat non publie"; CODE=1; }
+          exit $CODE

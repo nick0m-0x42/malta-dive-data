@@ -18,7 +18,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -30,8 +30,16 @@ jobs:
           COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
         run: |
           set +e
-          timeout 25m python scripts/build_temoins.py
+          # 14/10 (atlas#258) : les runs 97 et 98 sont morts sur une panne passagere de
+          # l'authentification Copernicus ; un second essai apres 2 min, puis le surveillant.
+          timeout 14m python scripts/build_temoins.py
           CODE=$?
+          if [ $CODE -ne 0 ]; then
+            echo "premier essai en echec (code $CODE), second essai dans 120 s"
+            sleep 120
+            timeout 14m python scripts/build_temoins.py
+            CODE=$?
+          fi
           [ -f data/temoins-run.txt ] || echo "ECHEC script interrompu (code $CODE)" > data/temoins-run.txt
           git config user.name "temoins-bot"
           git config user.email "bot@users.noreply.github.com"

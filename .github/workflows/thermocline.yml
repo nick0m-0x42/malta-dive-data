@@ -1,19 +1,31 @@
 name: Thermocline daily
+# POURQUOI (revu le 14/10, atlas#258) : le run 43 du 14/10 a echoue sur une panne
+# passagere de l'authentification Copernicus et personne ne l'a relance ; latest.json
+# est reste a la veille. Desormais : delai maximal du job, essais repetes dans le
+# script, un seul run a la fois, push apres rebase (un autre workflow commite sur
+# main dans la meme fenetre), et le surveillant (watchdog.yml) relance un releve en
+# retard. Le cron de 03:00 UTC arrive souvent vers 08-10 h : le surveillant ne
+# l'attend pas.
 on:
   schedule:
     - cron: "0 3 * * *"   # 03:00 UTC = 05:00 CEST / 04:00 CET (Malte)
-  workflow_dispatch: {}    # lancement manuel possible
+  workflow_dispatch: {}
 permissions:
   contents: write
+concurrency:
+  group: thermocline
+  cancel-in-progress: false
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with: { python-version: "3.11" }
       - run: pip install "copernicusmarine>=2" xarray numpy
       - name: Fetch thermocline profiles
+        timeout-minutes: 12
         env:
           COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUS_USER }}
           COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUS_PASSWORD }}
@@ -22,6 +34,11 @@ jobs:
         run: |
           git config user.name "thermocline-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/
-          git diff --cached --quiet || git commit -m "thermocline $(date -u +%F)"
-          git push
+          git add data/latest.json data/????-??-??.json
+          git diff --cached --quiet && { echo "Rien a commiter."; exit 0; }
+          git commit -m "thermocline $(date -u +%F)"
+          for i in 1 2 3; do
+            git pull --rebase --autostash && git push && exit 0
+            sleep $((i * 10))
+          done
+          echo "::error::push rejete trois fois"; exit 1

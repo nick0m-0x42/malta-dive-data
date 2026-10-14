@@ -13,7 +13,7 @@ Schema JSON:
   profile: [[z,t],...]  # jour courant (retrocompat V2)
 }}}
 """
-import json, os, sys, datetime, pathlib, traceback
+import json, os, sys, time, datetime, pathlib, traceback
 import numpy as np
 import copernicusmarine as cm
 
@@ -29,7 +29,23 @@ def check_env():
         print("FATAL: variables manquantes:", ", ".join(missing))
         sys.exit(2)
 
+# POURQUOI (14/10, atlas#258) : le run 43 du 14/10 est mort sur
+# CouldNotConnectToAuthenticationSystem, une indisponibilite passagere du service
+# d'authentification Copernicus (le meme compte passait a 12:12Z pour les temoins).
+# Un seul essai laissait latest.json a la veille toute la journee. Trois essais,
+# 60 puis 180 s d'attente ; au-dela, echec visible (code 3) et le surveillant relance.
+ATTEMPTS = 3
+WAITS = [60, 180]
+
 def open_ds(today):
+    for k in range(ATTEMPTS):
+        ds = _open_once(today, last=(k == ATTEMPTS - 1))
+        if ds is not None:
+            return ds
+        print(f"essai {k + 1}/{ATTEMPTS} en echec, nouvel essai dans {WAITS[k]} s", flush=True)
+        time.sleep(WAITS[k])
+
+def _open_once(today, last):
     try:
         return cm.open_dataset(
             dataset_id=DATASET,
@@ -41,8 +57,10 @@ def open_ds(today):
             minimum_depth=1, maximum_depth=110,
         )
     except Exception:
-        print("FATAL: echec open_dataset sur", DATASET)
         traceback.print_exc()
+        if not last:
+            return None
+        print("FATAL: echec open_dataset sur", DATASET)
         sys.exit(3)
 
 def ocean_column(ds, lat, lon):

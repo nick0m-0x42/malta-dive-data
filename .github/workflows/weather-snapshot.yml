@@ -1,10 +1,19 @@
 name: Weather snapshot (fallback Open-Meteo)
+# POURQUOI : repli de l'atlas quand Open-Meteo est injoignable. Revu le 14/10
+# (atlas#258) : modeles du score (vent gfs_seamless, houle ecmwf_wam025), requete
+# au noeud de grille de l'atlas, controle de contenu avant publication (le script
+# sort en 1 et ne publie rien si une variable du score est vide). Le cron de 3 h
+# est souvent perdu par GitHub (3 passages par jour au lieu de 8 depuis le 06/10) :
+# le surveillant (watchdog.yml) relance un instantane en retard.
 on:
   schedule:
     - cron: "17 */3 * * *"   # toutes les 3 h, minute decalee pour eviter la congestion GitHub
-  workflow_dispatch: {}      # lancement manuel possible
+  workflow_dispatch: {}
 permissions:
   contents: write
+concurrency:
+  group: weather-snapshot
+  cancel-in-progress: false
 jobs:
   snapshot:
     runs-on: ubuntu-latest
@@ -14,6 +23,7 @@ jobs:
       - uses: actions/setup-python@v6
         with: { python-version: "3.11" }
       - name: Fetch Open-Meteo snapshot (weather + marine)
+        timeout-minutes: 10
         run: python scripts/fetch_weather_snapshot.py
       - name: Publish on snapshot branch (force push, pas d'historique)
         run: |
