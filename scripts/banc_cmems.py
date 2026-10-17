@@ -268,15 +268,36 @@ def plateformes():
     else:
         print("  -> prochain pas : lire les mesures de ces seules plateformes (read_dataframe avec platform_ids), pas la boite", flush=True)
 
+MISSIONS = ["al", "c2", "cfo", "h2b", "h2c", "j3", "s3a", "s3b", "s6a", "swon"]
 BUDGET_S = 6 * 60  # par candidat ; le 18 et le 19/09, les bouees seules depassaient 20 min
 
 def candidat(tag, ds_id, jours):
     """Un candidat, execute dans le sous-processus : imprime ses lignes de rapport."""
     if tag == "plateformes":
         return plateformes()
-    df = tableau(ds_id, jours, BOX_ALT if tag == "altimetrie" else None)
-    try: df = df.reset_index()   # time, latitude, longitude parfois en index
-    except Exception: pass
+    if tag == "altimetrie":
+        # Run du 17/10 18:00Z : « al » (SARAL/AltiKa) seul ne rendait aucune ligne en 7 jours. Les
+        # produits L3 sont PAR MISSION : on les lit tous, une colonne « mission » dit d'ou vient chaque
+        # mesure, une mission absente du catalogue est dite et n'arrete pas les autres.
+        import pandas as pd
+        morceaux = []
+        for m in MISSIONS:
+            mid = "cmems_obs-wave_glo_phy-swh_nrt_%s-l3_PT1S" % m
+            try:
+                x = tableau(mid, jours, BOX_ALT)
+                try: x = x.reset_index()
+                except Exception: pass
+                x = x[[c for c in x.columns if c != "index"]]
+                print("  %-4s %s : %d ligne(s)" % (m, mid, len(x)), flush=True)
+                if len(x): x["mission"] = m; morceaux.append(x)
+            except Exception as e:
+                print("  %-4s %s : ECHEC %s" % (m, mid, repr(e)[:120]), flush=True)
+        df = pd.concat(morceaux, ignore_index=True) if morceaux else pd.DataFrame()
+        ds_id = "cmems_obs-wave_glo_phy-swh_nrt_*-l3_PT1S (%d missions)" % len(MISSIONS)
+    else:
+        df = tableau(ds_id, jours)
+        try: df = df.reset_index()   # time, latitude, longitude parfois en index
+        except Exception: pass
     n = len(df)
     print("  colonnes rendues : %s" % ", ".join(map(str, df.columns))[:300], flush=True)
     cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE", "VAVH"))]
