@@ -412,8 +412,8 @@
     "verdict": "ecmwf_wam025"
    },
    "controle_altimetrie": {
-    "heures": 0,
-    "heures_qualifiantes": 0,
+    "heures": 9,
+    "heures_qualifiantes": 9,
     "meilleur": null,
     "concordance": null
    }

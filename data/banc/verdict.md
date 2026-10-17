@@ -47,7 +47,22 @@ Arbitre : analyse Copernicus MEDSEA cmems_mod_med_wav_anfc_4.2km_PT1H-i, jours p
 Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 
 ### Controle independant : altimetrie satellite (< 25 km d'un point)
-0 heure(s) observee(s) dont 0 au-dessus du seuil ; colonnes lues : aucune. Aucune observation d'altimetrie a moins de 25 km des points.
+9 heure(s) observee(s) dont 9 au-dessus du seuil ; colonnes lues : VAVH. Trop peu d'heures pour juger (9 h au-dessus du seuil, 30 h exigees par echeance).
+
+| modele | echeance | heures | MAE | biais |
+|---|---|---|---|---|
+| copernicus_houle | J+1 | 9 | 0.27 m | -0.19 |
+| copernicus_houle | J+3 | 9 | 0.28 m | -0.18 |
+| copernicus_houle | J+6 | 9 | 0.73 m | -0.73 |
+| ecmwf_wam025 | J+1 | 9 | 0.15 m | -0.13 |
+| ecmwf_wam025 | J+3 | 9 | 0.17 m | -0.16 |
+| ecmwf_wam025 | J+6 | 9 | 0.35 m | -0.35 |
+| meteofrance_wave | J+1 | 9 | 0.16 m | -0.13 |
+| meteofrance_wave | J+3 | 9 | 0.21 m | -0.21 |
+| meteofrance_wave | J+6 | 9 | 0.56 m | -0.56 |
+| ncep_gfswave016 | J+1 | 9 | 0.29 m | -0.24 |
+| ncep_gfswave016 | J+3 | 9 | 0.44 m | -0.44 |
+| ncep_gfswave016 | J+6 | 9 | 0.73 m | -0.73 |
 
 ## Courant
 Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 3342 heures observees dont **1007** au-dessus du seuil.
