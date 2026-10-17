@@ -98,6 +98,49 @@ if arch["jeux"]:
     with open(p, "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
         f.write(json.dumps(arch, separators=(",", ":")).encode("utf-8"))
     say("ecrit %s" % p.name)
+# --- 1 bis. arbitre de houle A : l'analyse MEDSEA des jours passes ----------------
+# ARBITRE-HOULE-2026-10-17 (Nicolas, 17/10, « A + C ») : le banc n'avait aucune
+# observation de houle. Les jours passes du jeu analyse-prevision MEDSEA sont
+# recalcules par l'analyse (assimilation de l'altimetrie) : on les archive aux
+# 8 points, un fichier par jour, du debut du banc (17/09) a avant-hier (marge d'un
+# jour pour que l'analyse soit passee). Les jours deja archives ne sont pas relus.
+# Independance partielle seulement (vents ECMWF) : banc_verdict.py l'ecrit.
+DEBUT_BANC = dt.date(2026, 9, 17)
+JEU_A = "cmems_mod_med_wav_anfc_4.2km_PT1H-i"
+dA = OUT / "obs" / "houle-medsea"
+fin_a = (t0 - dt.timedelta(days=2)).date()
+manq = [DEBUT_BANC + dt.timedelta(days=k) for k in range((fin_a - DEBUT_BANC).days + 1)]
+manq = [d for d in manq if not (dA / (d.isoformat() + ".json.gz")).exists()]
+if manq and not CANDIDAT:
+    try:
+        ds = copernicusmarine.open_dataset(dataset_id=JEU_A, variables=["VHM0"],
+            start_datetime=min(manq).isoformat() + "T00:00:00", end_datetime=max(manq).isoformat() + "T23:00:00", **BOX)
+        temps = [str(x)[:16] for x in ds["time"].values]
+        serie, grille = {}, {}
+        for nom, (la, lo) in POINTS.items():
+            pt = ds.sel(latitude=la, longitude=lo, method="nearest")
+            grille[nom] = [float(pt["latitude"].values), float(pt["longitude"].values)]
+            serie[nom] = [None if np.isnan(float(y)) else round(float(y), 3) for y in pt["VHM0"].values]
+        dA.mkdir(parents=True, exist_ok=True)
+        ecrits, vides = 0, []
+        for d in manq:
+            idx = [i for i, t in enumerate(temps) if t.startswith(d.isoformat())]
+            val = {nom: [serie[nom][i] for i in idx] for nom in POINTS}
+            n = sum(1 for xs in val.values() for x in xs if x is not None)
+            if len(idx) < 24 or not n:
+                vides.append("%s (%d heures, %d valeurs)" % (d, len(idx), n)); continue
+            rec = {"jeu": JEU_A, "nature": "analyse, jour passe", "lu": t0.strftime("%Y-%m-%dT%H:%MZ"),
+                   "grid": grille, "times": [temps[i] for i in idx], "VHM0": val}
+            with open(dA / (d.isoformat() + ".json.gz"), "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
+                f.write(json.dumps(rec, separators=(",", ":")).encode("utf-8"))
+            ecrits += 1
+        say("arbitre A %s : %d jour(s) archive(s) sur %d manquant(s)%s" % (JEU_A, ecrits, len(manq), (" ; non ecrits : " + ", ".join(vides[:5])) if vides else ""))
+        if not ecrits: pb("arbitre A : aucun jour archive (%s)" % ", ".join(vides[:3]))
+    except Exception as e:
+        pb("arbitre A %s : %r" % (JEU_A, e))
+elif not CANDIDAT:
+    say("arbitre A %s : rien a archiver, jours a jour jusqu'au %s" % (JEU_A, fin_a))
+
 if not CANDIDAT:
     rapport("cmems-run.txt", [("OK " if not PB else "ECHEC ") + t0.strftime("%Y-%m-%dT%H:%MZ")] + LOG)
 
@@ -144,13 +187,18 @@ for motif, quoi in (MOTIFS if faire_inventaire else []):
 
 # Ces jeux sont tabulaires (sqlite), pas en grille : read_dataframe, pas
 # open_dataset (constat du run de 18:00). On archive ce qui tombe sur la zone.
-def tableau(ds_id, jours, **extra):
+def tableau(ds_id, jours, boite=None, **extra):
     return copernicusmarine.read_dataframe(
         dataset_id=ds_id,
         start_datetime=(t0 - dt.timedelta(days=jours)).strftime("%Y-%m-%dT%H:%M:%S"),
-        end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **dict(BOX, **extra))
+        end_datetime=t0.strftime("%Y-%m-%dT%H:%M:%S"), **dict(boite or BOX, **extra))
 
-ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 1),
+# ARBITRE-HOULE-2026-10-17 (controle C) : 1 jour sur la boite de Malte rendait 0 ligne. Fenetre
+# de 7 jours glissants et boite elargie d'un demi-degre (une trace qui passe a 25 km d'un point
+# du banc compte, banc_verdict.py) ; colonnes VAVH reconnues (nom des produits L3 d'altimetrie).
+BOX_ALT = dict(minimum_longitude=BOX["minimum_longitude"] - 0.5, maximum_longitude=BOX["maximum_longitude"] + 0.5,
+               minimum_latitude=BOX["minimum_latitude"] - 0.5, maximum_latitude=BOX["maximum_latitude"] + 0.5)
+ARB = [("altimetrie", "cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S", 7),
        ("plateformes", "cmems_obs-ins_med_phybgcwav_mynrt_na_irr", 0)]
 # 23/09 : verdict du candidat « plateformes » (run du 23/09 05:00Z) : 44 plateformes
 # a moins de 100 km, AUCUNE ne publie VHM0, BLUE (OMRG) absente. Le candidat
@@ -226,9 +274,12 @@ def candidat(tag, ds_id, jours):
     """Un candidat, execute dans le sous-processus : imprime ses lignes de rapport."""
     if tag == "plateformes":
         return plateformes()
-    df = tableau(ds_id, jours)
+    df = tableau(ds_id, jours, BOX_ALT if tag == "altimetrie" else None)
+    try: df = df.reset_index()   # time, latitude, longitude parfois en index
+    except Exception: pass
     n = len(df)
-    cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE"))]
+    print("  colonnes rendues : %s" % ", ".join(map(str, df.columns))[:300], flush=True)
+    cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE", "VAVH"))]
     print("%s %s : %d lignes sur la zone en %d jours, colonnes de houle : %s"
           % (tag, ds_id, n, jours, ", ".join(map(str, cols)) or "aucune"), flush=True)
     if n and cols:
