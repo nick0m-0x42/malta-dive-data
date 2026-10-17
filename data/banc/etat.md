@@ -21,7 +21,7 @@ a chaque echeance J+1, J+3, J+6. Sinon on prolonge.
 
 ## Dernier run
 ```
-ECHEC 2026-10-17T09:41Z · 1 probleme(s) · 1 manque(s) amont · derniere etape : fin
+OK 2026-10-17T09:43Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
 prevision gfs_seamless                 4536/4536 valeurs non vides
 prevision ecmwf_ifs                    4536/4536 valeurs non vides
 prevision icon_eu                      3429/4536 valeurs non vides
@@ -31,16 +31,15 @@ prevision meteofrance_wave             4536/4536 valeurs non vides
 prevision ncep_gfswave016              4536/4536 valeurs non vides
 prevision meteofrance_currents         3024/3024 valeurs non vides
 -- etape previsions terminee a 15 s
-observation LMML : HTTP 503, 0 lignes
-PROBLEME LMML vide
--- etape LMML terminee a 96 s
+observation LMML : HTTP 200, 96 lignes
+-- etape LMML terminee a 15 s
 jeux CALYPSO sur ERDDAP : EUHFR_NRTcurrent_HFR-CALYPSO-BARK_v3, EUHFR_NRTcurrent_HFR-CALYPSO-CENC_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LAPS_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LICA_v3, EUHFR_NRTcurrent_HFR-CALYPSO-MRAG_v3, EUHFR_NRTcurrent_HFR-CALYPSO-POZZ_v3, EUHFR_NRTcurrent_HFR-CALYPSO-SOPU_v3, EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3
--- etape recherche CALYPSO terminee a 99 s
+-- etape recherche CALYPSO terminee a 17 s
 observation CALYPSO courant : 13824 lignes, 48 heures, 8260 lignes renseignees
--- etape CALYPSO courant terminee a 101 s
+-- etape CALYPSO courant terminee a 19 s
 candidats vagues CALYPSO : aucun
 MANQUE aucun jeu de vagues CALYPSO ouvert sur ERDDAP : arbitre de houle cherche chez Copernicus (banc_cmems.py)
--- etape fin terminee a 101 s
+-- etape fin terminee a 19 s
 ```
 
 ## Dernier run Copernicus
