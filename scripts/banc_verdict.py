@@ -159,8 +159,10 @@ for j, f in jours(B / "obs" / "houle-altimetrie").items():
     for row in csv.DictReader(io.TextIOWrapper(gzip.open(f), encoding="utf-8")):
         if "variable" in row and "value" in row:   # format long de read_dataframe
             if (row["variable"] or "").upper() not in ("VAVH", "VHM0", "SWH"): continue
-            # drapeau de qualite Copernicus : 1 = bonne donnee ; vide = non fourni (garde)
-            if (row.get("value_qc") or "").strip() not in ("", "1", "1.0"): continue
+            # Drapeau de qualite : run du 17/10 18:22Z, les 212 lignes portaient value_qc = 0 (aucun controle
+            # fait a l'export). VAVH est la hauteur DEJA filtree par le producteur (VAVH_UNFILTERED existe a
+            # cote, jamais lue ici) : 0 est garde, seuls les drapeaux de rejet explicites (3, 4, 9) sont ecartes.
+            if (row.get("value_qc") or "").strip().split(".")[0] in ("3", "4", "9"): continue
             cle = row["variable"]; brut = row["value"]
         else:
             cle = next((c for c in row if c.upper() in ("VAVH", "VHM0", "SWH")), None)
