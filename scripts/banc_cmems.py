@@ -301,6 +301,16 @@ def candidat(tag, ds_id, jours):
     n = len(df)
     print("  colonnes rendues : %s" % ", ".join(map(str, df.columns))[:300], flush=True)
     cols = [c for c in df.columns if str(c).upper().startswith(("VHM0", "SWH", "WAVE", "VAVH"))]
+    # Run du 17/10 18:18Z : read_dataframe rend un FORMAT LONG (colonnes variable, value, value_qc) :
+    # aucune colonne ne s'appelle VAVH, 318 lignes jetees. On garde les lignes dont la variable est une
+    # hauteur significative, et on dit lesquelles et avec quels drapeaux de qualite.
+    if not cols and n and "variable" in df.columns and "value" in df.columns:
+        noms = sorted(set(map(str, df["variable"].unique())))
+        print("  format long, variables : %s" % ", ".join(noms), flush=True)
+        df = df[df["variable"].astype(str).str.upper().isin(["VAVH", "VHM0", "SWH", "VAVH_UNFILTERED"])]
+        if "value_qc" in df.columns:
+            print("  drapeaux de qualite : %s" % dict(df["value_qc"].value_counts(dropna=False)), flush=True)
+        n = len(df); cols = ["value"] if n else []
     print("%s %s : %d lignes sur la zone en %d jours, colonnes de houle : %s"
           % (tag, ds_id, n, jours, ", ".join(map(str, cols)) or "aucune"), flush=True)
     if n and cols:
