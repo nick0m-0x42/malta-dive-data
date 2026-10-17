@@ -21,7 +21,7 @@ a chaque echeance J+1, J+3, J+6. Sinon on prolonge.
 
 ## Dernier run
 ```
-OK 2026-10-17T18:14Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
+OK 2026-10-17T18:17Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
 prevision gfs_seamless                 4536/4536 valeurs non vides
 prevision ecmwf_ifs                    4536/4536 valeurs non vides
 prevision icon_eu                      3591/4536 valeurs non vides
@@ -30,16 +30,16 @@ prevision ecmwf_wam025                 4536/4536 valeurs non vides
 prevision meteofrance_wave             4536/4536 valeurs non vides
 prevision ncep_gfswave016              4536/4536 valeurs non vides
 prevision meteofrance_currents         3024/3024 valeurs non vides
--- etape previsions terminee a 84 s
+-- etape previsions terminee a 13 s
 observation LMML : HTTP 200, 96 lignes
--- etape LMML terminee a 84 s
+-- etape LMML terminee a 13 s
 jeux CALYPSO sur ERDDAP : EUHFR_NRTcurrent_HFR-CALYPSO-BARK_v3, EUHFR_NRTcurrent_HFR-CALYPSO-CENC_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LAPS_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LICA_v3, EUHFR_NRTcurrent_HFR-CALYPSO-MRAG_v3, EUHFR_NRTcurrent_HFR-CALYPSO-POZZ_v3, EUHFR_NRTcurrent_HFR-CALYPSO-SOPU_v3, EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3
--- etape recherche CALYPSO terminee a 87 s
+-- etape recherche CALYPSO terminee a 14 s
 observation CALYPSO courant : 13536 lignes, 47 heures, 8218 lignes renseignees
--- etape CALYPSO courant terminee a 89 s
+-- etape CALYPSO courant terminee a 16 s
 candidats vagues CALYPSO : aucun
 MANQUE aucun jeu de vagues CALYPSO ouvert sur ERDDAP : arbitre de houle cherche chez Copernicus (banc_cmems.py)
--- etape fin terminee a 89 s
+-- etape fin terminee a 16 s
 ```
 
 ## Dernier run Copernicus
@@ -52,7 +52,13 @@ OK 2026-10-17T18:00Z
 Recherche d'un arbitre de houle, 2026-10-17 18:00 UTC
 Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
 inventaire du catalogue saute : rapport vieux de 0.0 jour(s), refait a 7 jours
-  colonnes rendues : index
-altimetrie cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 0 lignes sur la zone en 7 jours, colonnes de houle : aucune
-  -> rien a archiver (aucune ligne ou aucune colonne de houle)
+  al   cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 0 ligne(s)
+  c2   cmems_obs-wave_glo_phy-swh_nrt_c2-l3_PT1S : 0 ligne(s)
+  cfo  cmems_obs-wave_glo_phy-swh_nrt_cfo-l3_PT1S : 0 ligne(s)
+  h2b  cmems_obs-wave_glo_phy-swh_nrt_h2b-l3_PT1S : 0 ligne(s)
+  h2c  cmems_obs-wave_glo_phy-swh_nrt_h2c-l3_PT1S : ECHEC CoordinatesOutOfDatasetBounds('Some of your subset selection [2026-10-10 18:00:00+00:00, 2026-10-17 18:00:00+00:00] for 
+  j3   cmems_obs-wave_glo_phy-swh_nrt_j3-l3_PT1S : 159 ligne(s)
+  s3a  cmems_obs-wave_glo_phy-swh_nrt_s3a-l3_PT1S : 66 ligne(s)
+  s3b  cmems_obs-wave_glo_phy-swh_nrt_s3b-l3_PT1S : 0 ligne(s)
+  s6a  cmems_obs-wave_glo_phy-swh_nrt_s6a-l3_PT1S : 93 ligne(s)
 ```

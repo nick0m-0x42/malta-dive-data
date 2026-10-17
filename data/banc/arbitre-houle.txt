@@ -1,6 +1,16 @@
 Recherche d'un arbitre de houle, 2026-10-17 18:00 UTC
 Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
 inventaire du catalogue saute : rapport vieux de 0.0 jour(s), refait a 7 jours
-  colonnes rendues : index
-altimetrie cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 0 lignes sur la zone en 7 jours, colonnes de houle : aucune
+  al   cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 0 ligne(s)
+  c2   cmems_obs-wave_glo_phy-swh_nrt_c2-l3_PT1S : 0 ligne(s)
+  cfo  cmems_obs-wave_glo_phy-swh_nrt_cfo-l3_PT1S : 0 ligne(s)
+  h2b  cmems_obs-wave_glo_phy-swh_nrt_h2b-l3_PT1S : 0 ligne(s)
+  h2c  cmems_obs-wave_glo_phy-swh_nrt_h2c-l3_PT1S : ECHEC CoordinatesOutOfDatasetBounds('Some of your subset selection [2026-10-10 18:00:00+00:00, 2026-10-17 18:00:00+00:00] for 
+  j3   cmems_obs-wave_glo_phy-swh_nrt_j3-l3_PT1S : 159 ligne(s)
+  s3a  cmems_obs-wave_glo_phy-swh_nrt_s3a-l3_PT1S : 66 ligne(s)
+  s3b  cmems_obs-wave_glo_phy-swh_nrt_s3b-l3_PT1S : 0 ligne(s)
+  s6a  cmems_obs-wave_glo_phy-swh_nrt_s6a-l3_PT1S : 93 ligne(s)
+  swon cmems_obs-wave_glo_phy-swh_nrt_swon-l3_PT1S : 0 ligne(s)
+  colonnes rendues : variable, platform_id, platform_type, time, longitude, latitude, depth, pressure, is_depth_from_producer, value, value_qc, institution, doi, product_doi, mission
+altimetrie cmems_obs-wave_glo_phy-swh_nrt_*-l3_PT1S (10 missions) : 318 lignes sur la zone en 7 jours, colonnes de houle : aucune
   -> rien a archiver (aucune ligne ou aucune colonne de houle)
