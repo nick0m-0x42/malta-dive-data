@@ -159,6 +159,8 @@ for j, f in jours(B / "obs" / "houle-altimetrie").items():
     for row in csv.DictReader(io.TextIOWrapper(gzip.open(f), encoding="utf-8")):
         if "variable" in row and "value" in row:   # format long de read_dataframe
             if (row["variable"] or "").upper() not in ("VAVH", "VHM0", "SWH"): continue
+            # drapeau de qualite Copernicus : 1 = bonne donnee ; vide = non fourni (garde)
+            if (row.get("value_qc") or "").strip() not in ("", "1", "1.0"): continue
             cle = row["variable"]; brut = row["value"]
         else:
             cle = next((c for c in row if c.upper() in ("VAVH", "VHM0", "SWH")), None)
