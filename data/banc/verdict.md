@@ -30,17 +30,17 @@ Arbitre : LMML (METAR), 764 heures observees dont **43** au-dessus du seuil.
 Voir data/banc/arbitre-houle.txt.
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 3303 heures observees dont **992** au-dessus du seuil.
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 3308 heures observees dont **994** au-dessus du seuil.
 **Verdict : meteofrance_currents** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_courant | J+1 | 914 | 0.48 m/s | -0.48 | 0.44 | 0.59 | 0.17 |
-| copernicus_courant | J+3 | 846 | 0.49 m/s | -0.49 | 0.44 | 0.61 | 0.18 |
-| copernicus_courant | J+6 | 737 | 0.47 m/s | -0.47 | 0.41 | 0.60 | 0.18 |
-| meteofrance_currents | J+1 | 914 | 0.44 m/s | -0.44 | 0.40 | 0.53 | 0.20 |
-| meteofrance_currents | J+3 | 846 | 0.44 m/s | -0.44 | 0.40 | 0.54 | 0.20 |
-| meteofrance_currents | J+6 | 737 | 0.44 m/s | -0.44 | 0.38 | 0.55 | 0.21 |
+| copernicus_courant | J+1 | 916 | 0.48 m/s | -0.48 | 0.44 | 0.59 | 0.17 |
+| copernicus_courant | J+3 | 848 | 0.49 m/s | -0.49 | 0.44 | 0.61 | 0.18 |
+| copernicus_courant | J+6 | 739 | 0.47 m/s | -0.47 | 0.41 | 0.60 | 0.18 |
+| meteofrance_currents | J+1 | 916 | 0.44 m/s | -0.44 | 0.40 | 0.53 | 0.20 |
+| meteofrance_currents | J+3 | 848 | 0.44 m/s | -0.44 | 0.40 | 0.54 | 0.20 |
+| meteofrance_currents | J+6 | 739 | 0.44 m/s | -0.44 | 0.38 | 0.55 | 0.21 |
 
 ## Lecture
 Le verdict designe un modele par variable pour tout l'archipel ; les colonnes nord, est, sud
