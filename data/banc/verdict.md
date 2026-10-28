@@ -65,17 +65,17 @@ Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 | ncep_gfswave016 | J+6 | 24 | 0.58 m | -0.57 |
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 4519 heures observees dont **1442** au-dessus du seuil.
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 4529 heures observees dont **1446** au-dessus du seuil.
 **Verdict : meteofrance_currents** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_courant | J+1 | 1364 | 0.45 m/s | -0.44 | 0.40 | 0.57 | 0.17 |
-| copernicus_courant | J+3 | 1296 | 0.45 m/s | -0.45 | 0.41 | 0.58 | 0.19 |
-| copernicus_courant | J+6 | 1187 | 0.44 m/s | -0.44 | 0.38 | 0.57 | 0.19 |
-| meteofrance_currents | J+1 | 1364 | 0.41 m/s | -0.41 | 0.36 | 0.52 | 0.17 |
-| meteofrance_currents | J+3 | 1296 | 0.41 m/s | -0.41 | 0.36 | 0.52 | 0.18 |
-| meteofrance_currents | J+6 | 1187 | 0.41 m/s | -0.41 | 0.36 | 0.53 | 0.19 |
+| copernicus_courant | J+1 | 1368 | 0.45 m/s | -0.44 | 0.40 | 0.57 | 0.17 |
+| copernicus_courant | J+3 | 1300 | 0.45 m/s | -0.45 | 0.41 | 0.58 | 0.19 |
+| copernicus_courant | J+6 | 1191 | 0.44 m/s | -0.44 | 0.38 | 0.57 | 0.19 |
+| meteofrance_currents | J+1 | 1368 | 0.41 m/s | -0.41 | 0.36 | 0.52 | 0.17 |
+| meteofrance_currents | J+3 | 1300 | 0.41 m/s | -0.41 | 0.36 | 0.53 | 0.18 |
+| meteofrance_currents | J+6 | 1191 | 0.41 m/s | -0.41 | 0.36 | 0.53 | 0.19 |
 
 ## Lecture
 Le verdict designe un modele par variable pour tout l'archipel ; les colonnes nord, est, sud
