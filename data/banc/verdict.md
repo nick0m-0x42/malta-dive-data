@@ -47,7 +47,7 @@ Arbitre : analyse Copernicus MEDSEA cmems_mod_med_wav_anfc_4.2km_PT1H-i, jours p
 Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 
 ### Controle independant : altimetrie satellite (< 25 km d'un point)
-27 heure(s) observee(s) dont 27 au-dessus du seuil ; colonnes lues : VAVH. Trop peu d'heures pour juger (27 h au-dessus du seuil, 30 h exigees par echeance).
+30 heure(s) observee(s) dont 27 au-dessus du seuil ; colonnes lues : VAVH. Trop peu d'heures pour juger (27 h au-dessus du seuil, 30 h exigees par echeance).
 
 | modele | echeance | heures | MAE | biais |
 |---|---|---|---|---|
@@ -65,7 +65,7 @@ Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 | ncep_gfswave016 | J+6 | 27 | 0.60 m | -0.59 |
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 4703 heures observees dont **1488** au-dessus du seuil.
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 4712 heures observees dont **1488** au-dessus du seuil.
 **Verdict : meteofrance_currents** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
