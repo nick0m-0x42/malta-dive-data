@@ -47,35 +47,35 @@ Arbitre : analyse Copernicus MEDSEA cmems_mod_med_wav_anfc_4.2km_PT1H-i, jours p
 Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 
 ### Controle independant : altimetrie satellite (< 25 km d'un point)
-37 heure(s) observee(s) dont 34 au-dessus du seuil ; colonnes lues : VAVH. Meilleur meteofrance_wave ; concordance avec le verdict : NON.
+38 heure(s) observee(s) dont 35 au-dessus du seuil ; colonnes lues : VAVH. Meilleur meteofrance_wave ; concordance avec le verdict : NON.
 
 | modele | echeance | heures | MAE | biais |
 |---|---|---|---|---|
-| copernicus_houle | J+1 | 34 | 0.35 m | -0.31 |
-| copernicus_houle | J+3 | 34 | 0.40 m | -0.26 |
-| copernicus_houle | J+6 | 34 | 0.64 m | -0.44 |
-| ecmwf_wam025 | J+1 | 34 | 0.30 m | -0.26 |
-| ecmwf_wam025 | J+3 | 34 | 0.30 m | -0.25 |
-| ecmwf_wam025 | J+6 | 34 | 0.52 m | -0.38 |
-| meteofrance_wave | J+1 | 34 | 0.28 m | -0.24 |
-| meteofrance_wave | J+3 | 34 | 0.33 m | -0.24 |
-| meteofrance_wave | J+6 | 34 | 0.56 m | -0.39 |
-| ncep_gfswave016 | J+1 | 34 | 0.40 m | -0.35 |
-| ncep_gfswave016 | J+3 | 34 | 0.47 m | -0.24 |
-| ncep_gfswave016 | J+6 | 34 | 0.75 m | -0.74 |
+| copernicus_houle | J+1 | 35 | 0.36 m | -0.31 |
+| copernicus_houle | J+3 | 35 | 0.40 m | -0.27 |
+| copernicus_houle | J+6 | 35 | 0.64 m | -0.44 |
+| ecmwf_wam025 | J+1 | 35 | 0.30 m | -0.26 |
+| ecmwf_wam025 | J+3 | 35 | 0.30 m | -0.25 |
+| ecmwf_wam025 | J+6 | 35 | 0.52 m | -0.38 |
+| meteofrance_wave | J+1 | 35 | 0.28 m | -0.24 |
+| meteofrance_wave | J+3 | 35 | 0.33 m | -0.24 |
+| meteofrance_wave | J+6 | 35 | 0.55 m | -0.38 |
+| ncep_gfswave016 | J+1 | 35 | 0.40 m | -0.35 |
+| ncep_gfswave016 | J+3 | 35 | 0.47 m | -0.25 |
+| ncep_gfswave016 | J+6 | 35 | 0.75 m | -0.74 |
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 5073 heures observees dont **1672** au-dessus du seuil.
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 5091 heures observees dont **1676** au-dessus du seuil.
 **Verdict : meteofrance_currents** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_courant | J+1 | 1594 | 0.45 m/s | -0.45 | 0.40 | 0.59 | 0.21 |
-| copernicus_courant | J+3 | 1526 | 0.46 m/s | -0.46 | 0.41 | 0.60 | 0.22 |
-| copernicus_courant | J+6 | 1417 | 0.45 m/s | -0.45 | 0.38 | 0.60 | 0.23 |
-| meteofrance_currents | J+1 | 1594 | 0.41 m/s | -0.41 | 0.36 | 0.54 | 0.20 |
-| meteofrance_currents | J+3 | 1526 | 0.42 m/s | -0.42 | 0.36 | 0.55 | 0.22 |
-| meteofrance_currents | J+6 | 1395 | 0.43 m/s | -0.43 | 0.35 | 0.57 | 0.24 |
+| copernicus_courant | J+1 | 1598 | 0.45 m/s | -0.45 | 0.40 | 0.58 | 0.21 |
+| copernicus_courant | J+3 | 1530 | 0.46 m/s | -0.46 | 0.41 | 0.60 | 0.22 |
+| copernicus_courant | J+6 | 1421 | 0.45 m/s | -0.45 | 0.38 | 0.60 | 0.23 |
+| meteofrance_currents | J+1 | 1598 | 0.41 m/s | -0.41 | 0.36 | 0.54 | 0.20 |
+| meteofrance_currents | J+3 | 1530 | 0.42 m/s | -0.42 | 0.36 | 0.55 | 0.22 |
+| meteofrance_currents | J+6 | 1399 | 0.43 m/s | -0.43 | 0.35 | 0.56 | 0.24 |
 
 ## Lecture
 Le verdict designe un modele par variable pour tout l'archipel ; les colonnes nord, est, sud
