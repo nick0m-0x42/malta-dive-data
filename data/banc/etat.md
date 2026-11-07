@@ -1,15 +1,15 @@
 # Etat du banc de fiabilite
 
-Genere le 2026-11-06 par scripts/banc_hebdo.py. Chiffres lus dans data/banc/, jamais supposes.
+Genere le 2026-11-07 par scripts/banc_hebdo.py. Chiffres lus dans data/banc/, jamais supposes.
 
-Premier jour archive : **2026-09-17**. Jours ecoules depuis : **51**.
+Premier jour archive : **2026-09-17**. Jours ecoules depuis : **52**.
 
 | source | jours | dernier | manquants depuis le debut |
 |---|---|---|---|
-| previsions (GFS, IFS, ICON-EU, ICON-2I, WAM, Meteo-France, GFS Wave, courants) | 51 | 2026-11-06 | aucun |
-| previsions Copernicus MEDSEA (houle, courant) | 51 | 2026-11-06 | aucun |
-| observations METAR Luqa (LMML) | 51 | 2026-11-06 | aucun |
-| observations courants CALYPSO | 51 | 2026-11-06 | aucun |
+| previsions (GFS, IFS, ICON-EU, ICON-2I, WAM, Meteo-France, GFS Wave, courants) | 52 | 2026-11-07 | aucun |
+| previsions Copernicus MEDSEA (houle, courant) | 52 | 2026-11-07 | aucun |
+| observations METAR Luqa (LMML) | 52 | 2026-11-07 | aucun |
+| observations courants CALYPSO | 52 | 2026-11-07 | aucun |
 | observations vagues CALYPSO | 0 | — | jamais archive |
 
 ## Regle d'arret
@@ -21,42 +21,42 @@ a chaque echeance J+1, J+3, J+6. Sinon on prolonge.
 
 ## Dernier run
 ```
-OK 2026-11-06T13:13Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
+OK 2026-11-07T07:01Z · 0 probleme(s) · 1 manque(s) amont · derniere etape : fin
 prevision gfs_seamless                 4536/4536 valeurs non vides
 prevision ecmwf_ifs                    4536/4536 valeurs non vides
-prevision icon_eu                      3429/4536 valeurs non vides
+prevision icon_eu                      3267/4536 valeurs non vides
 prevision italia_meteo_arpae_icon_2i   1971/4536 valeurs non vides
 prevision ecmwf_wam025                 4536/4536 valeurs non vides
 prevision meteofrance_wave             4536/4536 valeurs non vides
 prevision ncep_gfswave016              4536/4536 valeurs non vides
 prevision meteofrance_currents         3024/3024 valeurs non vides
--- etape previsions terminee a 13 s
+-- etape previsions terminee a 52 s
 observation LMML : HTTP 200, 96 lignes
--- etape LMML terminee a 14 s
+-- etape LMML terminee a 53 s
 jeux CALYPSO sur ERDDAP : EUHFR_NRTcurrent_HFR-CALYPSO-BARK_v3, EUHFR_NRTcurrent_HFR-CALYPSO-CENC_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LAPS_v3, EUHFR_NRTcurrent_HFR-CALYPSO-LICA_v3, EUHFR_NRTcurrent_HFR-CALYPSO-MRAG_v3, EUHFR_NRTcurrent_HFR-CALYPSO-POZZ_v3, EUHFR_NRTcurrent_HFR-CALYPSO-SOPU_v3, EUHFR_NRTcurrent_HFR-CALYPSO-Total_v3
--- etape recherche CALYPSO terminee a 15 s
-observation CALYPSO courant : 13536 lignes, 47 heures, 7194 lignes renseignees
--- etape CALYPSO courant terminee a 17 s
+-- etape recherche CALYPSO terminee a 54 s
+observation CALYPSO courant : 13536 lignes, 47 heures, 7348 lignes renseignees
+-- etape CALYPSO courant terminee a 57 s
 candidats vagues CALYPSO : aucun
 MANQUE aucun jeu de vagues CALYPSO ouvert sur ERDDAP : arbitre de houle cherche chez Copernicus (banc_cmems.py)
--- etape fin terminee a 17 s
+-- etape fin terminee a 57 s
 ```
 
 ## Dernier run Copernicus
 ```
-OK 2026-11-06T13:00Z
+OK 2026-11-07T07:00Z
 ```
 
 ## Arbitre de houle
 ```
-Recherche d'un arbitre de houle, 2026-11-06 13:00 UTC
+Recherche d'un arbitre de houle, 2026-11-07 07:00 UTC
 Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
 inventaire du catalogue saute : rapport vieux de 0.0 jour(s), refait a 7 jours
-  al   cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 84 ligne(s)
+  al   cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 105 ligne(s)
   c2   cmems_obs-wave_glo_phy-swh_nrt_c2-l3_PT1S : 0 ligne(s)
   cfo  cmems_obs-wave_glo_phy-swh_nrt_cfo-l3_PT1S : 66 ligne(s)
-  h2b  cmems_obs-wave_glo_phy-swh_nrt_h2b-l3_PT1S : 36 ligne(s)
-  h2c  cmems_obs-wave_glo_phy-swh_nrt_h2c-l3_PT1S : ECHEC CoordinatesOutOfDatasetBounds('Some of your subset selection [2026-10-30 13:00:00+00:00, 2026-11-06 13:00:00+00:00] for 
+  h2b  cmems_obs-wave_glo_phy-swh_nrt_h2b-l3_PT1S : 99 ligne(s)
+  h2c  cmems_obs-wave_glo_phy-swh_nrt_h2c-l3_PT1S : ECHEC CoordinatesOutOfDatasetBounds('Some of your subset selection [2026-10-31 07:00:00+00:00, 2026-11-07 07:00:00+00:00] for 
   j3   cmems_obs-wave_glo_phy-swh_nrt_j3-l3_PT1S : 138 ligne(s)
   s3a  cmems_obs-wave_glo_phy-swh_nrt_s3a-l3_PT1S : 0 ligne(s)
   s3b  cmems_obs-wave_glo_phy-swh_nrt_s3b-l3_PT1S : 138 ligne(s)
