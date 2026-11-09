@@ -1,24 +1,24 @@
-Recherche d'un arbitre de houle, 2026-11-09 06:00 UTC
+Recherche d'un arbitre de houle, 2026-11-09 14:00 UTC
 Contexte : aucun jeu de vagues CALYPSO ouvert sur l'ERDDAP EuroGOOS (17/09).
 inventaire du catalogue saute : rapport vieux de 0.0 jour(s), refait a 7 jours
   al   cmems_obs-wave_glo_phy-swh_nrt_al-l3_PT1S : 105 ligne(s)
   c2   cmems_obs-wave_glo_phy-swh_nrt_c2-l3_PT1S : 0 ligne(s)
   cfo  cmems_obs-wave_glo_phy-swh_nrt_cfo-l3_PT1S : 66 ligne(s)
   h2b  cmems_obs-wave_glo_phy-swh_nrt_h2b-l3_PT1S : 63 ligne(s)
-  h2c  cmems_obs-wave_glo_phy-swh_nrt_h2c-l3_PT1S : ECHEC CoordinatesOutOfDatasetBounds('Some of your subset selection [2026-11-02 07:00:00+00:00, 2026-11-09 07:00:00+00:00] for 
+  h2c  cmems_obs-wave_glo_phy-swh_nrt_h2c-l3_PT1S : ECHEC CoordinatesOutOfDatasetBounds('Some of your subset selection [2026-11-02 14:00:00+00:00, 2026-11-09 14:00:00+00:00] for 
   j3   cmems_obs-wave_glo_phy-swh_nrt_j3-l3_PT1S : 138 ligne(s)
   s3a  cmems_obs-wave_glo_phy-swh_nrt_s3a-l3_PT1S : 0 ligne(s)
   s3b  cmems_obs-wave_glo_phy-swh_nrt_s3b-l3_PT1S : 72 ligne(s)
   s6a  cmems_obs-wave_glo_phy-swh_nrt_s6a-l3_PT1S : 0 ligne(s)
-  swon cmems_obs-wave_glo_phy-swh_nrt_swon-l3_PT1S : 0 ligne(s)
+  swon cmems_obs-wave_glo_phy-swh_nrt_swon-l3_PT1S : 75 ligne(s)
   colonnes rendues : variable, platform_id, platform_type, time, longitude, latitude, depth, pressure, is_depth_from_producer, value, value_qc, institution, doi, product_doi, mission
   format long, variables : VAVH, VAVH_UNFILTERED, WIND_SPEED
-  drapeaux de qualite : {0: np.int64(296)}
-altimetrie cmems_obs-wave_glo_phy-swh_nrt_*-l3_PT1S (10 missions) : 296 lignes sur la zone en 7 jours, colonnes de houle : value
+  drapeaux de qualite : {0: np.int64(346)}
+altimetrie cmems_obs-wave_glo_phy-swh_nrt_*-l3_PT1S (10 missions) : 346 lignes sur la zone en 7 jours, colonnes de houle : value
   -> archive : obs/houle-altimetrie/2026-11-09.csv.gz
 plateformes : get --index-parts code 0, 4 fichier(s) : index_history.txt, index_latest.txt, index_monthly.txt, index_platform.txt
   index_platform : 5132 plateforme(s) dans le produit, colonnes : platform_code, creation_date, update_date, wmo_platform_code, data_source, institution, institution_edmo_code, parameters, last_latitude_observation, last_longitude_observation, last_date_observation
-  plateformes a moins de 100 km de Malte : 51
+  plateformes a moins de 100 km de Malte : 50
      6.8 km  61853            61853                  VHM0=non  derniere obs 2013-02-21T06:30:10Z  params= DEPH EWCT NSCT TEMP
      7.3 km  IDSL-Malta                              VHM0=non  derniere obs 2020-05-31T05:10:00Z  params= DEPH SLEV
      7.4 km  6204609          6204609                VHM0=non  derniere obs 2024-04-23T15:00:00Z  params= ATMS DEPH TEMP
@@ -42,7 +42,6 @@ plateformes : get --index-parts code 0, 4 fichier(s) : index_history.txt, index_
     38.0 km  6100891          6100891                VHM0=non  derniere obs 2007-04-23T03:17:43Z  params= DEPH TEMP
     39.9 km  VRLZ3            VRLZ3                  VHM0=non  derniere obs 2026-10-23T12:00:00Z  params= DEPH TEMP
     47.3 km  5EHMT7Y          5EHMT7Y                VHM0=non  derniere obs 2026-10-12T12:00:00Z  params= DEPH TEMP
-    47.3 km  DJNCPWR          DJNCPWR                VHM0=non  derniere obs 2026-11-08T12:00:00Z  params= DEPH TEMP
     50.4 km  EXD10209                                VHM0=non  derniere obs 1997-07-14T07:45:24Z  params= DEPH TEMP
     50.8 km  9V7730           9V7730                 VHM0=non  derniere obs 2026-11-08T22:00:00Z  params= DEPH TEMP
     52.8 km  EXO10813                                VHM0=non  derniere obs 1955-02-14T15:00:00Z  params= DEPH TEMP
