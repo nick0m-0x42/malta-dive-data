@@ -1,13 +1,13 @@
 # Verdict du banc de fiabilite
 
-Genere le 2026-11-09 par scripts/banc_verdict.py. Chiffres lus dans data/banc/, jamais supposes.
+Genere le 2026-11-10 par scripts/banc_verdict.py. Chiffres lus dans data/banc/, jamais supposes.
 
-Archive depuis le **2026-09-17** : **54** jour(s) d'emissions. 28 jours le **2026-10-14**, borne des 45 jours le **2026-10-31**.
+Archive depuis le **2026-09-17** : **55** jour(s) d'emissions. 28 jours le **2026-10-14**, borne des 45 jours le **2026-10-31**.
 Seuils « ca compte » : vent > 25 km/h, houle > 0.5 m (et 0.8 m publie a cote), courant > 0.25 m/s.
 Echeances : J+1, J+3, J+6. Il faut 30 h qualifiantes par echeance.
 
 ## Vent
-Arbitre : LMML (METAR), 1316 heures observees dont **143** au-dessus du seuil.
+Arbitre : LMML (METAR), 1340 heures observees dont **143** au-dessus du seuil.
 **Verdict : gfs_seamless** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
@@ -26,23 +26,23 @@ Arbitre : LMML (METAR), 1316 heures observees dont **143** au-dessus du seuil.
 | italia_meteo_arpae_icon_2i | J+6 | 0 | — | — | — | — | — |
 
 ## Houle
-Arbitre : analyse Copernicus MEDSEA cmems_mod_med_wav_anfc_4.2km_PT1H-i, jours passes, aux 8 points (assimile l'altimetrie, vents ECMWF : independance partielle ; copernicus_houle score pour information, non designable), 9984 heures observees dont **6054** au-dessus du seuil.
+Arbitre : analyse Copernicus MEDSEA cmems_mod_med_wav_anfc_4.2km_PT1H-i, jours passes, aux 8 points (assimile l'altimetrie, vents ECMWF : independance partielle ; copernicus_houle score pour information, non designable), 10176 heures observees dont **6089** au-dessus du seuil.
 **Verdict : ecmwf_wam025** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_houle | J+1 | 5923 | 0.11 m | -0.02 | 0.12 | 0.11 | 0.11 |
-| copernicus_houle | J+3 | 5905 | 0.19 m | -0.07 | 0.19 | 0.18 | 0.21 |
-| copernicus_houle | J+6 | 5858 | 0.41 m | -0.21 | 0.41 | 0.36 | 0.47 |
-| ecmwf_wam025 | J+1 | 5923 | 0.20 m | -0.01 | 0.22 | 0.20 | 0.18 |
-| ecmwf_wam025 | J+3 | 5905 | 0.23 m | -0.07 | 0.25 | 0.22 | 0.22 |
-| ecmwf_wam025 | J+6 | 5858 | 0.43 m | -0.22 | 0.45 | 0.37 | 0.46 |
-| meteofrance_wave | J+1 | 5923 | 0.21 m | -0.07 | 0.21 | 0.23 | 0.18 |
-| meteofrance_wave | J+3 | 5905 | 0.26 m | -0.11 | 0.27 | 0.27 | 0.24 |
-| meteofrance_wave | J+6 | 5858 | 0.43 m | -0.25 | 0.44 | 0.38 | 0.47 |
-| ncep_gfswave016 | J+1 | 5923 | 0.23 m | -0.07 | 0.22 | 0.23 | 0.25 |
-| ncep_gfswave016 | J+3 | 5905 | 0.33 m | -0.13 | 0.34 | 0.31 | 0.32 |
-| ncep_gfswave016 | J+6 | 5858 | 0.50 m | -0.32 | 0.49 | 0.47 | 0.53 |
+| copernicus_houle | J+1 | 5958 | 0.11 m | -0.02 | 0.12 | 0.11 | 0.11 |
+| copernicus_houle | J+3 | 5940 | 0.19 m | -0.07 | 0.19 | 0.18 | 0.20 |
+| copernicus_houle | J+6 | 5893 | 0.41 m | -0.21 | 0.40 | 0.36 | 0.47 |
+| ecmwf_wam025 | J+1 | 5958 | 0.20 m | -0.01 | 0.22 | 0.20 | 0.18 |
+| ecmwf_wam025 | J+3 | 5940 | 0.23 m | -0.07 | 0.25 | 0.22 | 0.22 |
+| ecmwf_wam025 | J+6 | 5893 | 0.43 m | -0.22 | 0.45 | 0.37 | 0.45 |
+| meteofrance_wave | J+1 | 5958 | 0.21 m | -0.07 | 0.21 | 0.23 | 0.18 |
+| meteofrance_wave | J+3 | 5940 | 0.26 m | -0.11 | 0.27 | 0.27 | 0.24 |
+| meteofrance_wave | J+6 | 5893 | 0.43 m | -0.25 | 0.44 | 0.38 | 0.47 |
+| ncep_gfswave016 | J+1 | 5958 | 0.23 m | -0.07 | 0.22 | 0.23 | 0.25 |
+| ncep_gfswave016 | J+3 | 5940 | 0.33 m | -0.13 | 0.34 | 0.31 | 0.32 |
+| ncep_gfswave016 | J+6 | 5893 | 0.50 m | -0.32 | 0.49 | 0.47 | 0.53 |
 
 Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 
@@ -55,7 +55,7 @@ Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 | copernicus_houle | J+3 | 38 | 0.38 m | -0.26 |
 | copernicus_houle | J+6 | 38 | 0.63 m | -0.45 |
 | ecmwf_wam025 | J+1 | 38 | 0.31 m | -0.27 |
-| ecmwf_wam025 | J+3 | 38 | 0.31 m | -0.27 |
+| ecmwf_wam025 | J+3 | 38 | 0.31 m | -0.26 |
 | ecmwf_wam025 | J+6 | 38 | 0.49 m | -0.36 |
 | meteofrance_wave | J+1 | 38 | 0.29 m | -0.26 |
 | meteofrance_wave | J+3 | 38 | 0.34 m | -0.26 |
@@ -65,17 +65,17 @@ Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 | ncep_gfswave016 | J+6 | 38 | 0.71 m | -0.68 |
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 5512 heures observees dont **1783** au-dessus du seuil.
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 5596 heures observees dont **1816** au-dessus du seuil.
 **Verdict : meteofrance_currents** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
 |---|---|---|---|---|---|---|---|
-| copernicus_courant | J+1 | 1705 | 0.45 m/s | -0.45 | 0.39 | 0.58 | 0.21 |
-| copernicus_courant | J+3 | 1637 | 0.46 m/s | -0.46 | 0.40 | 0.60 | 0.22 |
-| copernicus_courant | J+6 | 1528 | 0.45 m/s | -0.45 | 0.38 | 0.60 | 0.22 |
-| meteofrance_currents | J+1 | 1705 | 0.41 m/s | -0.41 | 0.35 | 0.54 | 0.20 |
-| meteofrance_currents | J+3 | 1637 | 0.42 m/s | -0.42 | 0.36 | 0.55 | 0.22 |
-| meteofrance_currents | J+6 | 1506 | 0.43 m/s | -0.43 | 0.35 | 0.56 | 0.24 |
+| copernicus_courant | J+1 | 1738 | 0.44 m/s | -0.44 | 0.39 | 0.58 | 0.21 |
+| copernicus_courant | J+3 | 1670 | 0.45 m/s | -0.45 | 0.40 | 0.60 | 0.22 |
+| copernicus_courant | J+6 | 1561 | 0.44 m/s | -0.44 | 0.38 | 0.60 | 0.22 |
+| meteofrance_currents | J+1 | 1738 | 0.41 m/s | -0.41 | 0.35 | 0.54 | 0.20 |
+| meteofrance_currents | J+3 | 1670 | 0.42 m/s | -0.42 | 0.36 | 0.55 | 0.22 |
+| meteofrance_currents | J+6 | 1539 | 0.42 m/s | -0.42 | 0.35 | 0.57 | 0.24 |
 
 ## Lecture
 Le verdict designe un modele par variable pour tout l'archipel ; les colonnes nord, est, sud
