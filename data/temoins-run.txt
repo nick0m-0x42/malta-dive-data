@@ -1,7 +1,7 @@
-OK 2026-11-11T05:00Z · 0 probleme(s)
-fenetre : 2026-11-11T00:00 -> 2026-11-18T06:00, 175 heures (dont 6 deja ecoulees)
-houle CMEMS : 90 points, 15750 valeurs
-courant CMEMS : 90 points, 15750 valeurs, 175 heures couvertes sur 175
+OK 2026-11-11T06:00Z · 0 probleme(s)
+fenetre : 2026-11-11T00:00 -> 2026-11-18T07:00, 176 heures (dont 7 deja ecoulees)
+houle CMEMS : 90 points, 15840 valeurs
+courant CMEMS : 90 points, 15840 valeurs, 176 heures couvertes sur 176
 vent italia_meteo_arpae_icon_2i : 419 points, 74 heures couvertes, 31006 valeurs
-vent ecmwf_ifs : 34 points, 175 heures couvertes, 5950 valeurs
-ecrit temoins.json : 989469 octets
+vent ecmwf_ifs : 34 points, 176 heures couvertes, 5984 valeurs
+ecrit temoins.json : 995423 octets
