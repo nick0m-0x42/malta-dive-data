@@ -1,7 +1,8 @@
-OK 2026-11-16T01:00Z · 0 probleme(s)
-fenetre : 2026-11-16T00:00 -> 2026-11-23T02:00, 171 heures (dont 2 deja ecoulees)
-houle CMEMS : 90 points, 15390 valeurs
-courant CMEMS : 90 points, 15390 valeurs, 171 heures couvertes sur 171
-vent italia_meteo_arpae_icon_2i : 419 points, 62 heures couvertes, 25978 valeurs
-vent ecmwf_ifs : 34 points, 171 heures couvertes, 5814 valeurs
-ecrit temoins.json : 978859 octets
+ECHEC 2026-11-16T06:00Z · 1 probleme(s)
+fenetre : 2026-11-16T00:00 -> 2026-11-23T07:00, 176 heures (dont 7 deja ecoulees)
+houle CMEMS : 90 points, 15840 valeurs
+courant CMEMS : 90 points, 15840 valeurs, 176 heures couvertes sur 176
+vent italia_meteo_arpae_icon_2i : 419 points, 74 heures couvertes, 31006 valeurs
+PROBLEME vent ecmwf_ifs : lot 0 en echec (<HTTPError 429: 'Too Many Requests'>)
+vent ecmwf_ifs : 21 points, 176 heures couvertes, 3696 valeurs
+ecrit temoins.json : 982059 octets
