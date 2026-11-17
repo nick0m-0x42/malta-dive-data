@@ -423,8 +423,8 @@
     "verdict": "ecmwf_wam025"
    },
    "controle_altimetrie": {
-    "heures": 51,
-    "heures_qualifiantes": 47,
+    "heures": 54,
+    "heures_qualifiantes": 50,
     "meilleur": "meteofrance_wave",
     "concordance": false
    }

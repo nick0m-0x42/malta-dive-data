@@ -47,22 +47,22 @@ Arbitre : analyse Copernicus MEDSEA cmems_mod_med_wav_anfc_4.2km_PT1H-i, jours p
 Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 
 ### Controle independant : altimetrie satellite (< 25 km d'un point)
-51 heure(s) observee(s) dont 47 au-dessus du seuil ; colonnes lues : VAVH. Meilleur meteofrance_wave ; concordance avec le verdict : NON.
+54 heure(s) observee(s) dont 50 au-dessus du seuil ; colonnes lues : VAVH. Meilleur meteofrance_wave ; concordance avec le verdict : NON.
 
 | modele | echeance | heures | MAE | biais |
 |---|---|---|---|---|
-| copernicus_houle | J+1 | 47 | 0.32 m | -0.28 |
-| copernicus_houle | J+3 | 47 | 0.37 m | -0.25 |
-| copernicus_houle | J+6 | 47 | 0.55 m | -0.40 |
-| ecmwf_wam025 | J+1 | 47 | 0.28 m | -0.25 |
-| ecmwf_wam025 | J+3 | 47 | 0.30 m | -0.26 |
-| ecmwf_wam025 | J+6 | 47 | 0.45 m | -0.33 |
-| meteofrance_wave | J+1 | 47 | 0.27 m | -0.24 |
-| meteofrance_wave | J+3 | 47 | 0.32 m | -0.25 |
-| meteofrance_wave | J+6 | 47 | 0.49 m | -0.35 |
-| ncep_gfswave016 | J+1 | 47 | 0.37 m | -0.33 |
-| ncep_gfswave016 | J+3 | 47 | 0.44 m | -0.26 |
-| ncep_gfswave016 | J+6 | 47 | 0.63 m | -0.59 |
+| copernicus_houle | J+1 | 50 | 0.32 m | -0.28 |
+| copernicus_houle | J+3 | 50 | 0.37 m | -0.26 |
+| copernicus_houle | J+6 | 50 | 0.52 m | -0.38 |
+| ecmwf_wam025 | J+1 | 50 | 0.28 m | -0.25 |
+| ecmwf_wam025 | J+3 | 50 | 0.30 m | -0.26 |
+| ecmwf_wam025 | J+6 | 50 | 0.45 m | -0.34 |
+| meteofrance_wave | J+1 | 50 | 0.27 m | -0.24 |
+| meteofrance_wave | J+3 | 50 | 0.31 m | -0.25 |
+| meteofrance_wave | J+6 | 50 | 0.49 m | -0.36 |
+| ncep_gfswave016 | J+1 | 50 | 0.36 m | -0.32 |
+| ncep_gfswave016 | J+3 | 50 | 0.44 m | -0.27 |
+| ncep_gfswave016 | J+6 | 50 | 0.61 m | -0.58 |
 
 ## Courant
 Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 5909 heures observees dont **1921** au-dessus du seuil.
