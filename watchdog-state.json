@@ -1,0 +1,112 @@
+{
+ "banc": {
+  "bad_since": null,
+  "checked": "2026-11-21T17:19:25+00:00",
+  "issue_number": null,
+  "issue_open": false,
+  "problems": [],
+  "relaunches": [
+   "2026-11-21T07:31:18+00:00"
+  ],
+  "signalled": null,
+  "state": "ok",
+  "ts": "2026-11-21"
+ },
+ "instantane": {
+  "bad_since": "2026-11-21T17:19:25+00:00",
+  "checked": "2026-11-21T17:19:25+00:00",
+  "fp": "9488104d42393521",
+  "fp_since": "2026-11-21T11:10:01+00:00",
+  "issue_number": null,
+  "issue_open": false,
+  "problems": [
+   "age 6.2 h (periode 3 h, retard au-dela de 3.75 h, panne au-dela de 7.0 h)"
+  ],
+  "relaunches": [
+   "2026-11-20T19:57:38+00:00",
+   "2026-11-21T01:20:55+00:00",
+   "2026-11-21T07:31:18+00:00",
+   "2026-11-21T17:19:25+00:00"
+  ],
+  "signalled": null,
+  "state": "retard",
+  "ts": "2026-11-21T11:07:24+00:00"
+ },
+ "site": {
+  "bad_since": null,
+  "checked": "2026-11-21T17:19:25+00:00",
+  "issue_number": null,
+  "issue_open": false,
+  "problems": [],
+  "relaunches": [],
+  "signalled": null,
+  "state": "ok",
+  "ts": null
+ },
+ "temoins": {
+  "bad_since": "2026-11-21T17:19:25+00:00",
+  "checked": "2026-11-21T17:19:25+00:00",
+  "fp": "fec6aeed7701ed75",
+  "fp_since": "2026-11-21T07:31:18+00:00",
+  "issue_number": null,
+  "issue_open": false,
+  "problems": [
+   "age 10.3 h (periode 6 h, retard au-dela de 6.75 h, panne au-dela de 13.0 h)"
+  ],
+  "relaunches": [
+   "2026-11-21T02:47:47+00:00",
+   "2026-11-21T17:19:25+00:00"
+  ],
+  "signalled": null,
+  "state": "retard",
+  "ts": "2026-11-21T07:00:00+00:00"
+ },
+ "thermocline": {
+  "bad_since": null,
+  "checked": "2026-11-21T17:19:25+00:00",
+  "days": {
+   "g|2026-11-21": "c738f3e02f89a05c",
+   "g|2026-11-22": "646292df82b5f242",
+   "g|2026-11-23": "36cc64b7991baa70",
+   "g|2026-11-24": "bd625a28657cf8ac",
+   "g|2026-11-25": "5e74c67a6b8d160b",
+   "g|2026-11-26": "cad421dc05ab42df",
+   "g|2026-11-27": "ff2b2e02ba4922f4",
+   "m|2026-11-21": "2d114a4588d05d06",
+   "m|2026-11-22": "77fb3a4f26adb71d",
+   "m|2026-11-23": "e60d3e3319cc8e80",
+   "m|2026-11-24": "c6801e6f758ae6cd",
+   "m|2026-11-25": "41dbaadae045234e",
+   "m|2026-11-26": "b861258aec2aa59b",
+   "m|2026-11-27": "069aad20ed66ceb4"
+  },
+  "days_prev": {
+   "g|2026-11-20": "45c2abf1c1611ffd",
+   "g|2026-11-21": "cc201d484540e03f",
+   "g|2026-11-22": "bc5a60d47bc222f4",
+   "g|2026-11-23": "a0b2acef3c8ecd0e",
+   "g|2026-11-24": "8751ad56e4b1da86",
+   "g|2026-11-25": "dcf69c1f0f770690",
+   "g|2026-11-26": "19c1426f9a529f6c",
+   "m|2026-11-20": "8de913fd14fc3bbf",
+   "m|2026-11-21": "140e1a723e29d714",
+   "m|2026-11-22": "9b2b42aad1365a86",
+   "m|2026-11-23": "d5b59452a9d83a0b",
+   "m|2026-11-24": "a9878b6e27d998bd",
+   "m|2026-11-25": "bfa34b0e1f3839d5",
+   "m|2026-11-26": "88336078443e5a9d"
+  },
+  "fp": "d498622a9a9f1b76",
+  "fp_since": "2026-11-21T09:35:17+00:00",
+  "issue_number": null,
+  "issue_open": false,
+  "problems": [],
+  "relaunches": [
+   "2026-11-21T07:31:18+00:00"
+  ],
+  "signalled": null,
+  "state": "ok",
+  "ts": "2026-11-21",
+  "ts_prev": "2026-11-20"
+ }
+}
