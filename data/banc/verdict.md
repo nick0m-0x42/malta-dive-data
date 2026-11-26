@@ -65,7 +65,7 @@ Au seuil 0.8 m (publie, ne pese pas) : meilleur ecmwf_wam025.
 | ncep_gfswave016 | J+6 | 60 | 0.57 m | -0.50 |
 
 ## Courant
-Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 6257 heures observees dont **2018** au-dessus du seuil.
+Arbitre : CALYPSO radar HF, mailles a E-Delimara 0.8 km, N-Comino 1.2 km, N-Gozo 1.2 km, N-Qawra 1.4 km, N-Valletta 0.9 km, S-Gozo 1.1 km, S-Lapsi 1.9 km, S-Zurrieq 1.2 km, 6259 heures observees dont **2018** au-dessus du seuil.
 **Verdict : meteofrance_currents** (28 jours et 30 h atteints).
 
 | modele | echeance | heures | MAE | biais | nord | est | sud |
